@@ -376,7 +376,7 @@ public partial class Form1 : Form
 
                             <p>Причем при выборе кнопки она открывается в окне свойств и, как и для всей формы, для кнопки в окне свойств мы можем изменить значения различных свойств.</p>
                             
-                            <p>Кроме того, если после переноса кнопки на форму мы откроем файл <code>Form1.Designer.cs</code>, то увидим там automatically сгенерированный код:</p>
+                            <p>Кроме того, если после переноса кнопки на форму мы откроем файл <code>Form1.Designer.cs</code>, то увидим там автоматически сгенерированный код:</p>
 
                             <pre><code class="language-csharp">namespace HelloApp
 {
@@ -714,7 +714,7 @@ namespace HelloApp
                                 <li><strong>Text</strong>: определяет заголовок формы</li>
                                 <li><strong>TopMost</strong>: если данное свойство имеет значение <code>true</code>, то форма всегда будет находиться поверх других окон</li>
                                 <li><strong>Visible</strong>: видима ли форма, если мы хотим скрыть форму от пользователя, то можем задать данному свойству значение <code>false</code></li>
-                                <li><strong>WindowState</strong>: указывает, в каком состоянии форма будет находиться при запуске: в нормальном, максимизированном или минимизированном</li>
+                                <li><strong>WindowState</strong>: указывает, в каком состоянии форма will be при запуске: в нормальном, максимизированном или минимизированном</li>
                             </ul>
 
                             <h3>Программная настройка свойств</h3>
@@ -1122,7 +1122,7 @@ namespace HelloApp
                                 <p class="text-sm mb-2 text-sky-900">Для генерации случайного цвета используйте класс <code>Random</code> и метод <code>Color.FromArgb()</code>:</p>
 <pre><code class="language-csharp">Random rnd = new Random();
 this.BackColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
-this.Text = $"Ширина: {this.Width}, Высота: {this.Height}";</code></pre>
+this.Text = "Ширина: " + this.Width.ToString() + ", Высота: " + this.Height.ToString();</code></pre>
                             </div>
 
                             <hr class="my-8 border-slate-200">
@@ -1191,18 +1191,531 @@ this.Text = $"Ширина: {this.Width}, Высота: {this.Height}";</code></
             {
                 chapter: "Глава 3. Контейнеры в Windows Forms",
                 lessons: [
-                    { title: "Динамическое добавление элементов", content: "<h1>Динамическое добавление элементов</h1><p>Обучающий материал о программном создании кнопок: <code>Button btn = new Button(); this.Controls.Add(btn);</code></p>" },
-                    { title: "Элементы GroupBox, Panel и FlowLayoutPanel", content: "<h1>Элементы GroupBox, Panel и FlowLayoutPanel</h1><p>Контент лекции...</p>" },
-                    { title: "TableLayoutPanel", content: "<h1>TableLayoutPanel</h1><p>Контент лекции...</p>" },
-                    { title: "Размеры элементов и их позиционирование в контейнере", content: "<h1>Размеры элементов и их позиционирование в контейнере</h1><p>Anchor и Dock свойства. Контент лекции...</p>" },
-                    { title: "Панель вкладок TabControl и SplitContainer", content: "<h1>Панель вкладок TabControl и SplitContainer</h1><p>Контент лекции...</p>" }
+                    {
+                        title: "Динамическое добавление элементов",
+                        content: `
+                            <h1>Динамическое добавление элементов</h1>
+                            <p>Для организации элементов управления в связанные группы существуют специальные элементы - контейнеры. Например, Panel, FlowLayoutPanel, SplitContainer, GroupBox. Ту же форму также можно отнести к контейнерам. Использование контейнеров облегчает управление элементами, а также придает форме определенный визуальный стиль.</p>
+                            
+                            <p>Все контейнеры имеют свойство <code>Controls</code>, которое содержит все элементы данного контейнера. Когда мы переносим какой-нибудь элемент с панели инструментов на контейнер, например, кнопку, она автоматически добавляется в данную коллекцию данного контейнера. Либо мы также можем добавить элемент управления динамически с помощью кода в эту же коллекцию.</p>
+
+                            <h3>Динамическое добавление элементов</h3>
+                            <p>Добавим на форму кнопку динамически. Для этого добавим событие загрузки формы, в котором будет создаваться новый элемент управления. Это можно сделать либо с помощью кода, либо визуальным образом.</p>
+                            
+                            <p>С помощью перетаскивания элементов с Панели Инструментов мы можем легко добавить новые элементы на форму. Однако такой способ довольно ограничен, поскольку очень часто требуется динамически создавать (удалять) элементы на форме.</p>
+                            
+                            <p>Для динамического добавления элементов создадим обработчик события загрузки формы в файле кода:</p>
+<pre><code class="language-csharp">private void Form1_Load(object sender, EventArgs e)
+{
+}</code></pre>
+
+                            <p>Теперь добавим в него код добавления кнопки на форму:</p>
+<pre><code class="language-csharp">private void Form1_Load(object sender, EventArgs e)
+{
+    Button helloButton = new Button();
+    helloButton.BackColor = Color.LightGray;
+    helloButton.ForeColor = Color.DarkGray;
+    helloButton.Location = new Point(10, 10);
+    helloButton.Text = "Привет";
+    this.Controls.Add(helloButton);
+}</code></pre>
+
+                            <p>Сначала мы создаем кнопку и устанавливаем ее свойства. Затем, используя метод <code>Controls.Add</code> мы добавляем ее в коллекцию элементов формы. Если бы мы это не сделали, мы бы кнопку не увидели, поскольку в этом случае для нашей формы ее просто не существовало бы.</p>
+                            
+                            <p>С помощью метода <code>Controls.Remove()</code> можно удалить ранее добавленный элемент с формы:</p>
+<pre><code class="language-csharp">this.Controls.Remove(helloButton);</code></pre>
+
+                            <p>Хотя в данном случае в качестве контейнера использовалась форма, но при добавлении и удалении элементов с любого другого контейнера, например, GroupBox, будет применяться все те же методы.</p>
+                        `
+                    },
+                    {
+                        title: "Элементы GroupBox, Panel и FlowLayoutPanel",
+                        content: `
+                            <h1>Элементы GroupBox, Panel и FlowLayoutPanel</h1>
+                            
+                            <h3>GroupBox</h3>
+                            <p>GroupBox представляет собой специальный контейнер, который ограничен от остальной формы границей. Он имеет заголовок, который устанавливается через свойство <code>Text</code>. Чтобы сделать GroupBox без заголовка, в качестве значения свойства Text просто устанавливается пустая строка.</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.1.png" alt="Элемент GroupBox" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Использование GroupBox</p>
+                            </div>
+                            
+                            <p>Нередко этот элемент используется для группирования переключателей - элементов RadioButton, так как позволяет разграничить их группы.</p>
+
+                            <h3>Panel</h3>
+                            <p>Элемент Panel представляет панель и также, как и GroupBox, объединяет элементы в группы. Она может визуально сливаться с остальной формой, если она имеет то же значение цвета фона в свойстве <code>BackColor</code>, что и форма. Чтобы ее выделить можно кроме цвета указать для элемента границы с помощью свойства <code>BorderStyle</code>, которое по умолчанию имеет значение <code>None</code>, то есть отсутствие границ.</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.2.png" alt="Элемент Panel" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Использование Panel</p>
+                            </div>
+                            
+                            <p>Также если панель имеет много элементов, которые выходят за ее границы, мы можем сделать прокручиваемую панель, установив ее свойство <code>AutoScroll</code> в <code>true</code>.</p>
+                            
+                            <p>Также, как и форма, GroupBox и Panel имеют коллекции элементов, и мы также можем динамически добавлять в эти контейнеры элементы. Например, на форме есть элемент GroupBox, который имеет имя <code>groupBox1</code>:</p>
+
+<pre><code class="language-csharp">private void Form1_Load(object sender, EventArgs e)
+{
+    Button helloButton = new Button();
+    helloButton.BackColor = Color.LightGray;
+    helloButton.ForeColor = Color.Red;
+    helloButton.Location = new Point(30, 30);
+    helloButton.Text = "Привет";
+    groupBox1.Controls.Add(helloButton);
+}</code></pre>
+
+                            <p>Для указания расположения элемента в контейнере мы используем структуру Point: <code>new Point(30, 30);</code>, которой в конструкторе передаем размещение по осям Х и Y. Эти координаты устанавливаются относительно левого верхнего угла контейнера - то есть в данном случае элемента GroupBox.</p>
+                            <p>При этом надо учитывать, что контейнером верхнего уровня является форма, а элемент groupBox1 сам находится в коллекции элементов формы. И при желании мы могли бы удалить его:</p>
+<pre><code class="language-csharp">this.Controls.Remove(groupBox1);</code></pre>
+
+                            <h3>FlowLayoutPanel</h3>
+                            <p>Элемент FlowLayoutPanel является унаследован от класса Panel, и поэтому наследует все его свойства. Однако при этом добавляя дополнительную функциональность. Так, этот элемент позволяет изменять позиционирование и компоновку дочерних элементов при изменении размеров формы во время выполнения программы.</p>
+                            
+                            <p>Свойство элемента <code>FlowDirection</code> позволяет задать направление, в котором направлены дочерние элементы. По умолчанию имеет значение <code>LeftToRight</code> - то есть элементы будут располагаться начиная от левого верхнего края. Следующие элементы будут идти вправо. Это свойство также может принимать следующие значения:</p>
+                            <ul>
+                                <li><code>RightToLeft</code> - элементы располагаются от правого верхнего угла в левую сторону</li>
+                                <li><code>TopDown</code> - элементы располагаются от левого верхнего угла и идут вниз</li>
+                                <li><code>BottomUp</code> - элементы располагаются от левого нижнего угла и идут вверх</li>
+                            </ul>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.3.png" alt="Элемент FlowLayoutPanel" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Использование FlowLayoutPanel</p>
+                            </div>
+
+                            <p>При расположении элементов важную роль играет свойство <code>WrapContents</code>. По умолчанию оно имеет значение <code>True</code>. Это позволяет переносить элементы, которые не умещаются в FlowLayoutPanel, на новую строку или в новый столбец. Если оно имеет значение <code>False</code>, то элементы не переносятся, а к контейнеру просто добавляются полосы прокрутки, если свойство <code>AutoScroll</code> равно true.</p>
+                        `
+                    },
+                    {
+                        title: "TableLayoutPanel",
+                        content: `
+                            <h1>TableLayoutPanel</h1>
+                            <p>Элемент TableLayoutPanel также переопределяет панель и располагает дочерние элементы управления в виде таблицы, где для каждого элемента имеется своя ячейка. Если нам хочется поместить в ячейку более одного элемента, то в эту ячейку добавляется другой компонент TableLayoutPanel, в который затем вкладываются другие элементы.</p>
+
+                            <p>Чтобы установить нужное число строк и столбцов таблицы, мы можем использовать свойства <code>Rows</code> и <code>Columns</code> соответственно. Выбрав один из этих пунктов в окне Properties (Свойства), нам отобразится следующее окно для настройки столбцов и строк:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.4.png" alt="Окно Column and Row Styles" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Окно настройки столбцов и строк</p>
+                            </div>
+
+                            <p>В поле <strong>Size Type</strong> мы можем указать размер столбцов / строк. Нам доступны три возможные варианта:</p>
+                            <ul>
+                                <li><strong>Absolute</strong>: задается абсолютный размер для строк или столбцов в пикселях</li>
+                                <li><strong>Percent</strong>: задается относительный размер в процентах. Если нам надо создать резиновый дизайн формы, чтобы ее строки и столбцы, а также элементы управления в ячейках таблицы автоматически масштабировались при изменении размеров формы, то нам нужно использовать именно эту опцию</li>
+                                <li><strong>AutoSize</strong>: высота строк и ширина столбцов задается автоматически в зависимости от размера самой большой в строке или столбце ячейки</li>
+                            </ul>
+
+                            <p>Также мы можем комбинировать эти значения, например, один столбец может быть фиксированным с абсолютной шириной, а остальные столбцы могут иметь ширину в процентах.</p>
+
+                            <p>В этом диалоговом окне мы также можем добавить или удалить строки и столбцы. В тоже время графический дизайнер в Visual Studio не всегда сразу отображает изменения в таблице - добавление или удаление строк и столбцов, изменение их размеров, поэтому, если изменений на форме никаких не происходит, надо ее закрыть и потом открыть заново в графическом дизайнере.</p>
+
+                            <p>Итак, например, у меня имеется три столбца и три строки размер у которых одинаков - 33.33%. В каждую ячейку таблицы добавлена кнопка, у которой установлено свойство <code>Dock=Fill</code>.</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.5.png" alt="TableLayoutPanel с кнопками" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Расположение кнопок в ячейках (33.33%)</p>
+                            </div>
+
+                            <p>Если я изменю размеры формы, то автоматически масштабируются и строки и столбцы вместе с заключенными в них кнопками:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.6.png" alt="Масштабирование TableLayoutPanel" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Автоматическое масштабирование элементов при изменении размеров формы</p>
+                            </div>
+
+                            <p>Что довольно удобно для создания масштабируемых интерфейсов.</p>
+
+                            <h3>Программное добавление и настройка</h3>
+                            <p>В коде динамически мы можем изменять значения столбцов и строк. Причем все столбцы представлены типом <code>ColumnStyle</code>, а строки - типом <code>RowStyle</code>:</p>
+
+<pre><code class="language-csharp">tableLayoutPanel1.RowStyles[0].SizeType = SizeType.Percent;
+tableLayoutPanel1.RowStyles[0].Height = 40;
+
+tableLayoutPanel1.ColumnStyles[0].SizeType = SizeType.Absolute;
+tableLayoutPanel1.ColumnStyles[0].Width = 50;</code></pre>
+
+                            <p>Для установки размера в ColumnStyle и RowStyle определено свойство <code>SizeType</code>, которое принимает одно из значений одноименного перечисления <code>SizeType</code>.</p>
+
+                            <p>Добавление элемента в контейнер TableLayoutPanel имеет свои особенности. Мы можем добавить его как в следующую свободную ячейку или можем явным образом указать ячейку таблицы:</p>
+
+<pre><code class="language-csharp">Button saveButton = new Button();
+// добавляем кнопку в следующую свободную ячейку
+tableLayoutPanel1.Controls.Add(saveButton);
+// добавляем кнопку в ячейку (2,2)
+tableLayoutPanel1.Controls.Add(saveButton, 2, 2);</code></pre>
+
+                            <p>В данном случае добавляем кнопку в ячейку, образуемую на пересечении третьего столбца и третьей строки. Правда, если у нас нет столько строк и столбцов, то система автоматически выберет нужную ячейку для добавления.</p>
+                        `
+                    },
+                    {
+                        title: "Размеры элементов и их позиционирование в контейнере",
+                        content: `
+                            <h1>Размеры элементов и их позиционирование в контейнере</h1>
+                            
+                            <h3>Позиционирование</h3>
+                            <p>Для каждого элемента управления мы можем определить свойство <code>Location</code>, которое задает координаты верхнего левого угла элемента относительно контейнера. При переносе элемента с панели инструментов на форму это свойство устанавливается автоматически. Однако потом в окне Свойств мы можем вручную поправить координаты положения элемента:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.7.png" alt="Свойство Location" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Свойство Location</p>
+                            </div>
+
+                            <p>Также мы можем установить позицию элемента в коде:</p>
+<pre><code class="language-csharp">private void Form1_Load(object sender, EventArgs e)
+{
+    button1.Location = new Point(50, 50);
+}</code></pre>
+
+                            <h3>Установка размеров</h3>
+                            <p>С помощью свойства <code>Size</code> можно задать размеры элемента:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.9.png" alt="Свойство Size" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Свойство Size</p>
+                            </div>
+
+                            <p>Дополнительные свойства <code>MaximumSize</code> и <code>MinimumSize</code> позволяют ограничить минимальный и максимальный размеры.</p>
+                            <p>Установка свойств в коде:</p>
+<pre><code class="language-csharp">button1.Size = new Size { Width = 50, Height = 25 };
+// установка свойств по отдельности
+button1.Width = 100;
+button1.Height = 35;</code></pre>
+
+                            <h3>Свойство Anchor</h3>
+                            <p>Дополнительные возможности по позиционировании элемента позволяет определить свойство <code>Anchor</code>. Это свойство определяет расстояние между одной из сторон элемента и стороной контейнера. И если при работе с контейнером мы будем его растягивать, то вместе с ним будет растягиваться и вложенный элемент.</p>
+                            
+                            <p>По умолчанию у каждого добавляемого элемента это свойство равно <code>Top, Left</code>:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.8.png" alt="Свойство Anchor" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Свойство Anchor</p>
+                            </div>
+
+                            <p>Это значит, что если мы будем растягивать форму влево или вверх, то элемент сохранит расстояние от левой и верхней границы элемента до границ контейнера, в качестве которого выступает форма.</p>
+                            <p>Мы можем задать четыре возможных значения для этого свойства или их комбинацию:</p>
+                            <ul>
+                                <li>Top</li>
+                                <li>Bottom</li>
+                                <li>Left</li>
+                                <li>Right</li>
+                            </ul>
+                            
+                            <p>Например, если мы изменим значение этого свойства на противоположное - <code>Bottom, Right</code>, тогда у нас будет неизменным расстояние между правой и нижней стороной элемента и формой.</p>
+                            <p>При этом надо отметить, что данное свойство учитывает расстояние до границ контейнера, а не формы. То есть если у нас на форме есть элемент Panel, а на Panel расположена кнопка, то на кнопку будет влиять изменение границ Panel, а не формы. Растяжение формы будет в этом случае влиять только, если оно влияет на контейнер Panel.</p>
+                            
+                            <p>Чтобы задать это свойство в коде, надо использовать перечисление <code>AnchorStyles</code>:</p>
+<pre><code class="language-csharp">button1.Anchor = AnchorStyles.Left;
+// задаем комбинацию значений
+button1.Anchor = AnchorStyles.Left | AnchorStyles.Top;</code></pre>
+
+                            <h3>Свойство Dock</h3>
+                            <p>Свойство <code>Dock</code> позволяет прикрепить элемент к определенной стороне контейнера. По умолчанию оно имеет значение None, но также позволяет задать еще пять значений:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.10.png" alt="Свойство Dock" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Свойство Dock</p>
+                            </div>
+
+                            <ul>
+                                <li><strong>Top</strong>: элемент прижимается к верхней границе контейнера</li>
+                                <li><strong>Bottom</strong>: элемент прижимается к нижней границе контейнера</li>
+                                <li><strong>Left</strong>: элемент прижимается к левой стороне контейнера</li>
+                                <li><strong>Right</strong>: элемент прикрепляется к правой стороне контейнера</li>
+                                <li><strong>Fill</strong>: элемент заполняет все пространство контейнера</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        title: "Панель вкладок TabControl и SplitContainer",
+                        content: `
+                            <h1>Панель вкладок TabControl и SplitContainer</h1>
+                            
+                            <h3>TabControl</h3>
+                            <p>Элемент <strong>TabControl</strong> позволяет создать элемент управления с несколькими вкладками. И каждая вкладка будет хранить некоторый набор других элементов управления, как кнопки, текстовые поля и др. Каждая вкладка представлена классом <code>TabPage</code>.</p>
+                            <p>Чтобы настроить вкладки элемента TabControl используем свойство <code>TabPages</code>. При переносе элемента TabControl с панели инструментов на форму по умолчанию создаются две вкладки - tabPage1 и tabPage2. Изменим их отображение с помощью свойства TabPages:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.11.png" alt="Свойство TabPages" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Свойство TabPages в окне Properties</p>
+                            </div>
+
+                            <p>Нам откроется окно редактирования/добавления и удаления вкладок:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.12.png" alt="Редактор коллекции вкладок" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Окно TabPage Collection Editor</p>
+                            </div>
+
+                            <p>Каждая вкладка представляет своего рода панель, на которую мы можем добавить другие элементы управления, а также заголовок, с помощью которого мы можем переключаться по вкладкам. Текст заголовка задается с помощью свойства <code>Text</code>.</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.13.png" alt="TabControl на форме" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Внешний вид TabControl с измененными заголовками</p>
+                            </div>
+
+                            <h4>Управление вкладками в коде</h4>
+                            <p>Для добавления новой вкладки нам надо ее создать и добавить в коллекцию <code>tabControl1.TabPages</code> с помощью метода <code>Add</code>:</p>
+<pre><code class="language-csharp">// добавление вкладки
+TabPage newTabPage = new TabPage();
+newTabPage.Text = "Континенты";
+tabControl1.TabPages.Add(newTabPage);</code></pre>
+
+                            <p>Удаление так же просто:</p>
+<pre><code class="language-csharp">// удаление вкладки
+// по индексу
+tabControl1.TabPages.RemoveAt(0);
+// по объекту
+tabControl1.TabPages.Remove(newTabPage);</code></pre>
+
+                            <p>Получая в коллекции <code>tabControl1.TabPages</code> нужную вкладку по индексу, мы можем ей легко манипулировать:</p>
+<pre><code class="language-csharp">// изменение свойств
+tabControl1.TabPages[0].Text = "Первая вкладка";</code></pre>
+
+                            <h3>SplitContainer</h3>
+                            <p>Элемент <strong>SplitContainer</strong> позволяет создавать две разделенные сплитером панели. Изменяя положение сплитера, можно изменить размеры этих панелей.</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.15.png" alt="Элемент SplitContainer" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Отображение SplitContainer на форме</p>
+                            </div>
+
+                            <p>Используя свойство <code>Orientation</code>, можно задать горизонтальное или вертикальное отображение сплитера на форме. В данном случае это свойство принимает значения <code>Horizontal</code> и <code>Vertical</code> соответственно.</p>
+                            <p>В случае, когда надо запретить изменение положения сплиттера, то можно присвоить свойству <code>IsSplitterFixed</code> значение <code>true</code>. Таким образом, сплитер окажется фиксированным, и мы не сможем поменять его положение.</p>
+                            <p>По умолчанию при растяжении формы или ее сужении также будет меняться размер обеих панелей сплитконтейнера. Однако мы можем закрепить за одной панелью фиксированную ширину (при вертикальной ориентации сплиттера) или высоту (при горизонтальной ориентации сплиттера). Для этого нам надо установить у элемента SplitContainer свойство <code>FixedPanel</code>. В качестве значения оно принимает панель, которую надо зафиксировать:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/3.14.png" alt="Свойство FixedPanel" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Настройка свойства FixedPanel</p>
+                            </div>
+
+                            <p>Чтобы изменить положение сплитера в коде, мы можем управлять свойством <code>SplitterDistance</code>, которое задает положение сплиттера в пикселях от левого или верхнего края элемента SplitContainer. А с помощью свойства <code>SplitterIncrement</code> можно задать шаг, на который будет перемещаться сплиттер при движении его с помощью клавиш-стрелок.</p>
+                            <p>Чтобы скрыть одну из двух панелей, мы можем установить свойство <code>Panel1Collapsed</code> или <code>Panel2Collapsed</code> в <code>true</code>.</p>
+                        `
+                    },
+                    {
+                        title: "Практические работы",
+                        content: `
+                            <h1>Практические работы к Главе 3</h1>
+                            <p>Закрепим знания о контейнерах в Windows Forms, выполнив несколько заданий. Каждое задание направлено на отработку конкретных навыков построения адаптивных и сложных интерфейсов.</p>
+                            
+                            <hr class="my-8 border-slate-200">
+
+                            <h3>Работа 1: «Динамическая матрица» (Добавление элементов)</h3>
+                            <p><strong>Цель:</strong> Научиться генерировать элементы управления в цикле с помощью кода.</p>
+                            <ol>
+                                <li>Создайте пустую форму.</li>
+                                <li>В обработчике события <code>Form_Load</code> напишите двойной цикл <code>for</code> (например, 3 на 3), который создаст 9 кнопок.</li>
+                                <li>Задайте каждой кнопке фиксированные размеры (например, 50x50 пикселей) и координаты, вычисляя их через индексы цикла (например: <code>X = 10 + i * 55</code>, <code>Y = 10 + j * 55</code>).</li>
+                                <li>Добавьте каждую кнопку на форму с помощью коллекции <code>this.Controls.Add(...)</code>.</li>
+                            </ol>
+                            <div class="my-4 p-4 bg-sky-50 rounded-lg border border-sky-200">
+                                <h4 class="font-bold text-sky-800 mt-0">💡 Подсказка</h4>
+<pre><code class="language-csharp">for(int i = 0; i < 3; i++) {
+    for(int j = 0; j < 3; j++) {
+        Button btn = new Button();
+        btn.Size = new Size(50, 50);
+        btn.Location = new Point(10 + i * 55, 10 + j * 55);
+        btn.Text = (i * 3 + j + 1).ToString();
+        this.Controls.Add(btn);
+    }
+}</code></pre>
+                            </div>
+
+                            <hr class="my-8 border-slate-200">
+
+                            <h3>Работа 2: «Адаптивная галерея» (FlowLayoutPanel)</h3>
+                            <p><strong>Цель:</strong> Изучить перенос элементов во <code>FlowLayoutPanel</code> при изменении размера окна.</p>
+                            <ol>
+                                <li>Добавьте на форму <code>FlowLayoutPanel</code> и установите его свойство <code>Dock</code> в значение <code>Fill</code>.</li>
+                                <li>Программно (в цикле) или через панель инструментов добавьте в панель 15-20 кнопок или элементов управления с одинаковым размером.</li>
+                                <li>Запустите приложение и попробуйте изменить размер окна. Убедитесь, что элементы автоматически переносятся на новую строку.</li>
+                                <li>Поэкспериментируйте со свойством <code>FlowDirection</code> (например, установите его в <code>TopDown</code>).</li>
+                            </ol>
+
+                            <hr class="my-8 border-slate-200">
+
+                            <h3>Работа 3: «Макет калькулятора» (TableLayoutPanel)</h3>
+                            <p><strong>Цель:</strong> Построить жесткую масштабируемую сетку для приложения.</p>
+                            <ol>
+                                <li>Добавьте на форму элемент <code>TableLayoutPanel</code> и установите ему <code>Dock = Fill</code>. Настройте его на 4 столбца и 5 строк.</li>
+                                <li>В окне стилей строк и столбцов установите размер всех столбцов в <code>25%</code>. Верхнюю строку сделайте фиксированной (например, <code>Absolute</code> 50 пикселей), а остальные строки установите в <code>25%</code>.</li>
+                                <li>В верхнюю строку (в первую ячейку) добавьте текстовое поле. Найдите у него свойство <code>ColumnSpan</code> и установите его равным 4, чтобы поле ввода растянулось на всю ширину.</li>
+                                <li>В остальные ячейки добавьте кнопки с цифрами и операциями, обязательно установив у каждой кнопки свойство <code>Dock = Fill</code>, чтобы кнопки заполнили ячейки.</li>
+                                <li>Измените размер формы при запущенном приложении. Кнопки должны пропорционально увеличиваться и уменьшаться.</li>
+                            </ol>
+
+                            <hr class="my-8 border-slate-200">
+
+                            <h3>Работа 4: «Классический интерфейс» (Anchor и Dock)</h3>
+                            <p><strong>Цель:</strong> Научиться комбинировать свойства привязки для создания сложных интерфейсов.</p>
+                            <ol>
+                                <li>Добавьте <code>Panel</code> (назовем её PanelTop) и установите ей <code>Dock = Top</code>. Задайте высоту 50 и какой-нибудь цвет фона.</li>
+                                <li>Добавьте вторую <code>Panel</code> (PanelLeft) и установите ей <code>Dock = Left</code>.</li>
+                                <li>Добавьте в оставшийся центр элемент <code>TextBox</code> (с включенным свойством <code>Multiline = true</code>) и установите ему <code>Dock = Fill</code>.</li>
+                                <li>Добавьте внутрь верхней панели (PanelTop) кнопку "Сохранить" и поместите её в правый нижний угол панели. Установите кнопке свойство <code>Anchor = Bottom, Right</code>.</li>
+                                <li>Проверьте работу при изменении размеров окна: панели должны оставаться на своих местах, текстовое поле — растягиваться, а кнопка — всегда оставаться справа.</li>
+                            </ol>
+
+                            <hr class="my-8 border-slate-200">
+
+                            <h3>Работа 5: «Рабочая область с панелями» (TabControl и SplitContainer)</h3>
+                            <p><strong>Цель:</strong> Изучить компоненты-разделители и вкладки.</p>
+                            <ol>
+                                <li>Разместите на пустой форме <code>SplitContainer</code> и задайте ему <code>Dock = Fill</code>.</li>
+                                <li>В левую панель сплиттера добавьте несколько кнопок меню (установив им <code>Dock = Top</code>).</li>
+                                <li>В правую панель добавьте <code>TabControl</code> и также установите ему <code>Dock = Fill</code>.</li>
+                                <li>В окне свойств добавьте 3 вкладки в <code>TabControl</code> (через свойство <code>TabPages</code>) и назовите их: "Основные", "Дополнительные", "Настройки".</li>
+                                <li>Запустите приложение. Попробуйте потянуть за центральный разделитель (сплиттер) мышью, чтобы изменить пропорции левой и правой панели.</li>
+                            </ol>
+                        `
+                    }
                 ]
             },
             {
                 chapter: "Глава 4. Элементы управления",
                 lessons: [
-                    { title: "Кнопка", content: "<h1>Кнопка (Button)</h1><p>Материал про элемент Button...</p>" },
-                    { title: "Метки и ссылки", content: "<h1>Метки и ссылки</h1><p>Label и LinkLabel...</p>" },
+                    {
+                        title: "Кнопка",
+                        content: `
+                            <h1>Кнопка (Button)</h1>
+                            <p>Элементы управления представляют собой визуальные классы, которые получают введенные пользователем данные и могут инициировать различные события. Все элементы управления наследуются от класса <code>Control</code> и поэтому имеют ряд общих свойств:</p>
+                            <ul>
+                                <li><strong>Anchor</strong>: Определяет, как элемент будет растягиваться</li>
+                                <li><strong>BackColor</strong>: Определяет фоновый цвет элемента</li>
+                                <li><strong>BackgroundImage</strong>: Определяет фоновое изображение элемента</li>
+                                <li><strong>ContextMenu</strong>: Контекстное меню, которое открывается при нажатии на элемент правой кнопкой мыши. Задается с помощью элемента ContextMenu</li>
+                                <li><strong>Cursor</strong>: Представляет, как будет отображаться курсор мыши при наведении на элемент</li>
+                                <li><strong>Dock</strong>: Задает расположение элемента на форме</li>
+                                <li><strong>Enabled</strong>: Определяет, будет ли доступен элемент для использования. Если это свойство имеет значение False, то элемент блокируется.</li>
+                                <li><strong>Font</strong>: Устанавливает шрифт текста для элемента</li>
+                                <li><strong>ForeColor</strong>: Определяет цвет шрифта</li>
+                                <li><strong>Location</strong>: Определяет координаты верхнего левого угла элемента управления</li>
+                                <li><strong>Name</strong>: Имя элемента управления</li>
+                                <li><strong>Size</strong>: Определяет размер элемента</li>
+                                <li><strong>Width</strong>: ширина элемента</li>
+                                <li><strong>Height</strong>: высота элемента</li>
+                                <li><strong>TabIndex</strong>: Определяет порядок обхода элемента по нажатию на клавишу Tab</li>
+                                <li><strong>Tag</strong>: Позволяет сохранять значение, ассоциированное с этим элементом управления</li>
+                            </ul>
+
+                            <h3>Кнопка</h3>
+                            <p>Наиболее часто используемым элементом управления является кнопка. Обрабатывая событие нажатия кнопки, мы можем производить те или иные действия.</p>
+                            <p>При нажатии на кнопку на форме в редакторе Visual Studio мы по умолчанию попадаем в код обработчика события <code>Click</code>, который будет выполняться при нажатии:</p>
+
+<pre><code class="language-csharp">private void button1_Click(object sender, EventArgs e)
+{
+    MessageBox.Show("Hello World");
+}</code></pre>
+
+                            <h3>Оформление кнопки</h3>
+                            <p>Чтобы управлять внешним отображением кнопки, можно использовать свойство <code>FlatStyle</code>. Оно может принимать следующие значения:</p>
+                            <ul>
+                                <li><strong>Flat</strong> - Кнопка имеет плоский вид</li>
+                                <li><strong>Popup</strong> - Кнопка приобретает объемный вид при наведении на нее указателя, в иных случаях она имеет плоский вид</li>
+                                <li><strong>Standard</strong> - Кнопка имеет объемный вид (используется по умолчанию)</li>
+                                <li><strong>System</strong> - Вид кнопки зависит от операционной системы</li>
+                            </ul>
+
+                            <h3>Изображение на кнопке</h3>
+                            <p>Как и для многих элементов управления, для кнопки можно задавать изображение с помощью свойства BackgroundImage. Однако мы можем также управлять размещением текста и изображения на кнопке. Для этого надо использовать свойство <code>TextImageRelation</code>. Оно приобретает следующие значения:</p>
+                            <ul>
+                                <li><strong>Overlay</strong>: текст накладывается на изображение</li>
+                                <li><strong>ImageAboveText</strong>: изображение располагается над текстом</li>
+                                <li><strong>TextAboveImage</strong>: текст располагается над изображением</li>
+                                <li><strong>ImageBeforeText</strong>: изображение располагается перед текстом</li>
+                                <li><strong>TextBeforeImage</strong>: текст располагается перед изображением</li>
+                            </ul>
+
+                            <p>Например, установим для кнопки изображение. Для этого выберем кнопку и в окне Свойств нажмем на поле Image (не путать с BackgroundImage). Нам откроется диалоговое окно установки изображения:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/4.1.png" alt="Выбор изображения" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Диалоговое окно выбора ресурса</p>
+                            </div>
+
+                            <p>В этом окне выберем опцию <strong>Local Resource</strong> и нажмем на кнопку <strong>Import</strong>, после чего нам откроется диалоговое окно для выбора файла изображения.</p>
+                            <p>После выбора изображения мы можем установить свойство <code>ImageAlign</code>, которое управляет позиционированием изображения на кнопке:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/4.2.png" alt="Свойство ImageAlign" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Настройка выравнивания изображения</p>
+                            </div>
+
+                            <p>Нам доступны 9 вариантов, с помощью которых мы можем прикрепить изображение к определенной стороне кнопки. Оставим здесь значение по умолчанию - <code>MiddleCenter</code>, то есть позиционирование по центру.</p>
+                            <p>Затем перейдем к свойству <code>TextImageRelation</code> и установим для него значение <code>ImageBeforeText</code>. В итоге мы получим кнопку, где сразу после изображения идет надпись на кнопке:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/4.3.png" alt="Кнопка с изображением и текстом" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Кнопка с настроенным изображением и текстом</p>
+                            </div>
+
+                            <h3>Клавиши быстрого доступа</h3>
+                            <p>При работе с формами при использовании клавиатуры очень удобно пользоваться клавишами быстрого доступа. При нажатии на клавиатуре комбинации клавиш Alt + некоторый символ, будет вызываться определенная кнопка. Например, зададим для некоторой кнопки свойство Text равное <code>&amp;Аватар</code>. Первый знак - амперсанд - определяет ту букву, которая будет подчеркнута. В данном случае надпись будет выглядеть как <u>А</u>ватар. И теперь чтобы вызвать событие Click, нам достаточно нажать на комбинацию клавиш Alt + А.</p>
+
+                            <h3>Кнопки по умолчанию</h3>
+                            <p>Форма, на которой размещаются все элементы управления, имеет свойства, позволяющие назначать кнопку по умолчанию и кнопку отмены.</p>
+                            <p>Так, свойство формы <code>AcceptButton</code> позволяет назначать кнопку по умолчанию, которая будет срабатывать по нажатию на клавишу Enter.</p>
+                            <p>Аналогично работает свойство формы <code>CancelButton</code>, которое назначает кнопку отмены. Назначив такую кнопку, мы можем вызвать ее нажатие, нажав на клавишу Esc.</p>
+                        `
+                    },
+                    {
+                        title: "Метки и ссылки",
+                        content: `
+                            <h1>Метки и ссылки</h1>
+                            
+                            <h3>Label</h3>
+                            <p>Для отображения простого текста на форме, доступного только для чтения, служит элемент Label. Чтобы задать отображаемый текст метки, надо установить свойство <code>Text</code> элемента.</p>
+
+                            <h3>LinkLabel</h3>
+                            <p>Особый тип меток представляют элементы LinkLabel, которые предназначены для вывода ссылок, которые аналогичны ссылкам, размещенным на стандартных веб-станиц.</p>
+                            <p>Также, как и с обычными ссылками на веб-страницах, мы можем по отношению к данному элементу определить три цвета:</p>
+                            <ul>
+                                <li>Свойство <code>ActiveLinkColor</code> задает цвет ссылки при нажатии</li>
+                                <li>Свойство <code>LinkColor</code> задает цвет ссылки до нажатия, по которой еще не было переходов</li>
+                                <li>Свойство <code>VisitedLinkColor</code> задает цвет ссылки, по которой уже были переходы</li>
+                            </ul>
+                            <p>Кроме цвета ссылки для данного элемента мы можем задать свойство <code>LinkBehavior</code>, которое управляет поведением ссылки. Это свойство принимает четыре возможных значения:</p>
+                            <ul>
+                                <li><strong>SystemDefault</strong>: для ссылки устанавливаются системные настройки</li>
+                                <li><strong>AlwaysUnderline</strong>: ссылка всегда подчеркивается</li>
+                                <li><strong>HoverUnderline</strong>: ссылка подчеркивается только при наведении на нее курсора мыши</li>
+                                <li><strong>NeverUnderline</strong>: ссылка никогда не подчеркивается</li>
+                            </ul>
+                            <p>По умолчанию весь текст на данном элементе считается ссылкой. Однако с помощью свойства <code>LinkArea</code> мы можем изменить область ссылки. Например, мы не хотим включать в ссылку первые шесть символов. Для этого задаем подсвойство <code>Start</code>:</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/4.4.png" alt="Свойство LinkArea" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Свойство LinkArea</p>
+                            </div>
+
+                            <p>Чтобы выполнить переход по ссылке по нажатию на нее, надо дополнительно написать код. Данный код должен обрабатывать событие <code>LinkClicked</code>, которое есть у элемента LinkLabel. Например, пусть у нас на форме есть элемент ссылки называется linkLabel1 и который содержит некоторую ссылку:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="img/4.5.png" alt="Элемент LinkLabel на форме" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Элемент LinkLabel</p>
+                            </div>
+
+                            <p>Чтобы перейти по ссылке, зададим обработчик LinkClicked:</p>
+<pre><code class="language-csharp">public partial class Form1 : Form
+{
+    public Form1()
+    {
+        InitializeComponent();
+        // задаем обработчик события
+        linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+    }
+
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+        System.Diagnostics.Process.Start("http://metanit.com");
+    }
+}</code></pre>
+
+                            <p>Метод <code>System.Diagnostics.Process.Start()</code> откроет данную ссылку в веб-браузере, который установлен в системе браузером по умолчанию.</p>
+                        `
+                    },
                     { title: "Текстовое поле TextBox", content: "<h1>Текстовое поле TextBox</h1><p>Материал...</p>" },
                     { title: "Элемент MaskedTextBox", content: "<h1>Элемент MaskedTextBox</h1><p>Материал...</p>" },
                     { title: "Элементы Radiobutton и CheckBox", content: "<h1>Элементы Radiobutton и CheckBox</h1><p>Материал...</p>" },
@@ -1335,7 +1848,7 @@ this.Text = $"Ширина: {this.Width}, Высота: {this.Height}";</code></
                 <p class="lead">Добро пожаловать! Этот интерактивный курс проведет вас от создания первого окна до построения сложных графических приложений с использованием продвинутых паттернов проектирования.</p>
                 
                 <h2>О курсе</h2>
-                <p>Windows Forms (WinForms) — это классическая, но до сих пор невероятно популярная и простая в освоении платформа для создания настольных приложений под Windows. В рамках данного курса вы узнаете:</p>
+                <p>Windows Forms (WinForms) — это классическая, но до сих пор невероятно популярная и simple в освоении платформа для создания настольных приложений под Windows. В рамках данного курса вы узнаете:</p>
                 <ul>
                     <li>Как настроить среду разработки Visual Studio и .NET CLI.</li>
                     <li>Как работать с визуальным дизайнером и управлять свойствами элементов.</li>
