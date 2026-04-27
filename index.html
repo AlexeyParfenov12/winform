@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Курс: Разработка на Windows Forms</title>
+    <!-- Подключаем Tailwind CSS с плагином Typography для красивого форматирования текста лекций -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    
+    <!-- Подключаем Highlight.js для подсветки синтаксиса в стиле Visual Studio 2015 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',
+                        sidebar: '#f8fafc',
+                        darkText: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Стили для скроллбара */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .nav-item.active {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-weight: 600;
+            border-left: 4px solid #0ea5e9;
+        }
+        
+        /* Стиль для кнопки главной страницы, когда она активна */
+        #btn-home.active {
+            background-color: #e0f2fe;
+            border-color: #bae6fd;
+            color: #0369a1;
+        }
+        
+        .chapter-title {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-white text-slate-800 font-sans h-screen flex overflow-hidden">
+
+    <!-- Кнопка меню для мобильных -->
+    <button id="mobile-menu-btn" class="md:hidden fixed top-4 right-4 z-50 p-2 bg-primary text-white rounded-md shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+    </button>
+
+    <!-- Боковая панель (Навигация) -->
+    <aside id="sidebar" class="w-80 bg-sidebar border-r border-slate-200 flex-shrink-0 h-full overflow-y-auto transition-transform duration-300 absolute md:relative z-40 transform -translate-x-full md:translate-x-0">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-slate-900 mb-2">Windows Forms</h1>
+            <p class="text-sm text-slate-500 mb-6">Полное руководство по C#</p>
+            
+            <!-- Кнопка Главная -->
+            <a href="#" id="btn-home" class="block px-4 py-3 mb-6 text-sm font-bold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-3 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                </svg>
+                Главная страница
+            </a>
+
+            <nav id="course-nav" class="space-y-1">
+                <!-- Навигация будет сгенерирована через JS -->
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Затемнение фона для мобильного меню -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
+
+    <!-- Основной контент лекции -->
+    <main class="flex-1 h-full overflow-y-auto bg-white">
+        <div class="max-w-4xl mx-auto px-6 py-12 md:py-16">
+            <article id="content-area" class="prose prose-slate prose-lg max-w-none prose-a:text-primary">
+                <!-- Контент лекции будет загружен сюда -->
+            </article>
+            
+            <!-- Навигация между лекциями (Вперед/Назад) -->
+            <div class="mt-12 pt-8 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <button id="btn-prev" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors flex items-center gap-2 hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                    Предыдущая лекция
+                </button>
+                <button id="btn-next" class="px-5 py-2.5 bg-primary hover:bg-sky-600 text-white rounded-lg transition-colors flex items-center gap-2 ml-auto hidden">
+                    <span id="btn-next-text">Следующая лекция</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Скрипт приложения -->
+    <script>
+        // База данных курса (содержит структуру и контент)
+        const courseData = [
+            {
+                chapter: "Глава 1. Введение в Windows Forms",
+                lessons: [
+                    {
+                        title: "Первое приложение с .NET CLI",
+                        content: `
+                            <h1>Первое приложение с .NET CLI</h1>
+                            <p>Для создания графических интерфейсов с помощью платформы .NET применяются разные технологии - Window Forms, WPF, UWP. Однако наиболее простой и удобной платформой до сих пор остается Window Forms или сокращенно WinForms. Данное руководство ставит своей целью дать понимание принципов создания графических интерфейсов с помощью технологии WinForms и работы основных элементов управления.</p>
+                            
+                            <p>Создадим первое приложение на C# и Windows Forms. Что нам для этого потребуется? Прежде всего необходим текстовый редактор для написания кода программы. Можно взять любой понравившийся текстовый редактор, например, Visual Studio Code. Также для компиляции и запуска программы нам потребуется .NET SDK. Для его установки перейдем на официальный сайт по ссылке .NET SDK.</p>
+
+                            <p>После установки .NET SDK для первого проекта определим какую-нибудь папку. Например, в моем случае это будет папка <code>C:\\dotnet\\winforms\\helloapp</code>. Откроем терминал/командную строку и перейдем к созданной папке проекта с помощью команды <code>cd</code>:</p>
+                            
+                            <pre><code class="language-bash">cd C:\\dotnet\\winforms\\helloapp</code></pre>
+                            
+                            <p>В данном случае мы для создания и запуска проекта мы будем использовать встроенную инфраструктуру .NET CLI, которая устанавливается вместе с .NET SDK.</p>
+
+                            <h3>Создание проекта</h3>
+                            <p>Для создания проекта в .NET CLI применяется команда <code>dotnet new</code>, после которой указывается тип проекта. Для создания проекта Windows Forms применяется шаблон - <code>winforms</code>. Поэтому введем в терминале команду <code>dotnet new winforms</code>:</p>
+                            
+                            <pre><code class="language-bash">C:\\Users\\eugen>cd C:\\dotnet\\winforms\\helloapp
+
+C:\\dotnet\\winforms\\helloapp>dotnet new winforms
+Шаблон "Приложение Windows Forms" успешно создан.
+
+Идет обработка действий после создания...
+Восстановление C:\\dotnet\\winforms\\helloapp\\helloapp.csproj:
+  Определение проектов для восстановления...
+  Восстановлен C:\\dotnet\\winforms\\helloapp\\helloapp.csproj (за 1,04 sec).
+Восстановление выполнено.
+
+C:\\dotnet\\winforms\\helloapp></code></pre>
+
+                            <p>После выполнения этой команды у нас будет создан следующий проект:</p>
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.16.png" alt="Структура проекта Windows Forms" class="mx-auto rounded shadow-sm">
+                                <p class="text-sm mt-2">Структура проекта Windows Forms</p>
+                            </div>
+
+                            <h3>Структура проекта Windows Forms</h3>
+                            <p>Рассмотрим базовую структуру простейшего стандартного проекта Windows Forms:</p>
+                            <ul>
+                                <li><strong>helloapp.csproj</strong>: стандартный файл проекта C#, который соответствует назанию проекта (по умолчанию названию каталога) и описывает все его настройки.</li>
+                                <li><strong>helloapp.csproj.user</strong>: дополнительный файл проекта C#, который хранит специфичные для текущего пользователя настройки.</li>
+                                <li><strong>Form1.cs</strong>: содержит класс формы, которая по умолчанию запускается при старте приложения</li>
+                                <li><strong>Form1.Designer.cs</strong>: он содержит определение компонентов формы, добавленных на форму в графическом дизайнере (графический дизайнер Windows Forms на данный момент официально доступен только в Visual Studio)</li>
+                                <li><strong>Program.cs</strong>: определяет класс Program, который запускается при старте приложения и запускает форму Form1</li>
+                            </ul>
+
+                            <p>Например, посмотрим на содержимое файла <code>helloapp.csproj</code>:</p>
+                            <pre><code class="language-xml">&lt;Project Sdk="Microsoft.NET.Sdk"&gt;
+  &lt;PropertyGroup&gt;
+    &lt;OutputType&gt;WinExe&lt;/OutputType&gt;
+    &lt;TargetFramework&gt;net8.0-windows&lt;/TargetFramework&gt;
+    &lt;Nullable&gt;enable&lt;/Nullable&gt;
+    &lt;UseWindowsForms&gt;true&lt;/UseWindowsForms&gt;
+    &lt;ImplicitUsings&gt;enable&lt;/ImplicitUsings&gt;
+  &lt;/PropertyGroup&gt;
+&lt;/Project&gt;</code></pre>
+
+                            <p>Для компиляции приложения Windows Forms указаны следующие настройки:</p>
+                            <ul>
+                                <li><strong>OutputType</strong>: определяет выходной тип проекта. Должен иметь значение <code>WinExe</code> - то есть выполняемое приложение с расширением exe под Windows.</li>
+                                <li><strong>TargetFramework</strong>: определяет применяемую для компиляции версию фреймворка .NET. Поскольку при создании проекта была выбрана версия .NET 8, а сам проект зависит от компонентов Windows, то здесь должно быть значение <code>net7.0-windows</code> (или выше, например net8.0-windows).</li>
+                                <li><strong>Nullable</strong>: подключает в проект функциональность ссылочных nullable-типов.</li>
+                                <li><strong>UseWindowsForms</strong>: указывает, будет ли проект использовать Windows Forms (для этого устанавливается значение <code>true</code>).</li>
+                                <li><strong>ImplicitUsings</strong>: подключает в проект функциональность неявно подключаемых глобальных пространств имен.</li>
+                            </ul>
+
+                            <h3>Запуск проекта</h3>
+                            <p>Проект по умолчанию не представляет какой-то грандиозной функциональности, тем не менее этот проект мы уже можем запустить. Итак, запустим проект. Для этого выполним команду <code>dotnet run</code>:</p>
+                            <pre><code class="language-bash">C:\\dotnet\\winforms\\helloapp>dotnet run</code></pre>
+
+                            <p>При запуске запускается графическая форма, код которой определяет класс Form1:</p>
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.18.png" alt="Запуск приложения Windows Forms" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Запуск приложения</p>
+                            </div>
+
+                            <p>Файл <code>Program.cs</code> определяет точку входа в приложение:</p>
+                            <pre><code class="language-csharp">namespace helloapp;
+
+static class Program
+{
+    [STAThread]
+    static void Main()
+    {
+        ApplicationConfiguration.Initialize();
+        Application.Run(new Form1());
+    }    
+}</code></pre>
+
+                            <p>Метод <code>Main</code> снабжен атрибутом <code>[STAThread]</code>. Этот атрибут, грубо говоря, необходим для корректной работы компонентов Windows. В самом методе сначала вызывается метод <code>ApplicationConfiguration.Initialize()</code>, который устанавливает некоторую базовую конфигурацию приложения.</p>
+                            <p>Затем вызывается метод <code>Application.Run(new Form1());</code>, в который передается объект отображаемой по умолчанию на экране формы. То есть, когда мы запустим приложение, сработает метод <code>Main</code>, в котором будет вызван метод <code>Application.Run(new Form1())</code>, благодаря чему мы увидим форму Form1 на экране.</p>
+
+                            <h3>Определение формы</h3>
+                            <p>Теперь посмотрим на определение формы и немного изменим его. Для этого откроем файл <code>Form1.cs</code> в текстовом редакторе. По умолчанию он выглядит следующим образом:</p>
+                            <pre><code class="language-csharp">namespace helloapp;
+
+public partial class Form1 : Form
+{
+    public Form1()
+    {
+        InitializeComponent();
+    }
+}</code></pre>
+
+                            <p>Класс формы - <code>Form1</code> представляет графическую форму - фактически то окно, которое мы увидим на экране при запуске проекта. Этот класс определяется как частичный (с модификатором <code>partial</code>) и наследуется от встроенного класса <code>Form</code>, который содержит базовую функциональность форм.</p>
+                            <p>В самом классе Form1 определен по умолчанию только конструктор, где вызывается метод <code>InitializeComponent()</code>, который выполняет инициализацию компонентов формы из файла дизайнера <code>Form1.Designer.cs</code>. По сути именно код этого файла передается выше через вызов <code>InitializeComponent()</code>.</p>
+                            
+                            <p>Теперь изменим его код следующим образом:</p>
+                            <pre><code class="language-csharp">namespace helloapp;
+
+public partial class Form1 : Form
+{
+    public Form1()
+    {
+        InitializeComponent();
+        
+        // определяем кнопку
+        Button button = new Button();
+        // текст кнопки
+        button.Text = "Click";
+        // положение кнопки
+        button.Location = new Point(50, 50);
+        // размер кнопки
+        button.Size = new Size { Width = 80, Height = 30 };
+        // обработчик нажатия кнопки
+        button.Click += (o, e) => MessageBox.Show("Hello METANIT.COM!");
+        
+        // добавление кнопки на форму
+        this.Controls.Add(button);
+    }
+}</code></pre>
+
+                            <p>В данном случае на форму добавляется кнопка, и у нее настраиваются различные свойства, как текст, положение на форме, размер, а также обработчик нажатия. Заново запустим проект, и нам отобразится та же форма, которая теперь будет содержать кнопку. И по нажатию на кнопку появится маленькое окно с сообщением.</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.19.png" alt="Форма с кнопкой" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Результат работы программы</p>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Первое приложение в Visual Studio",
+                        content: `
+                            <h1>Первое приложение в Visual Studio</h1>
+                            <p>Для создания графических приложений на C# можно использовать .NET CLI, но также можно использовать бесплатную и полнофункциональную среду разработки - Visual Studio Community 2022, которая в ряде случаев облегчает проектирование приложения. Так, загрузим установщик Visual Studio по адресу: <a href="https://www.visualstudio.com/en-us/downloads" target="_blank" rel="noopener noreferrer">https://www.visualstudio.com/en-us/downloads</a>.</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.7.png" alt="Скачивание Visual Studio" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Скачивание Visual Studio Community</p>
+                            </div>
+
+                            <p>Чтобы добавить в Visual Studio поддержку проектов для Windows Forms и C# и .NET, в программе установки среди рабочих нагрузок нужно выбрать только пункт <strong>Разработка классических приложений .NET</strong>. Можно выбрать и больше опций или вообще все опции, однако стоит учитывать свободный размер на жестком диске - чем больше опций будет выбрано, соответственно тем больше места на диске будет занято.</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/vs1.png" alt="Установка рабочих нагрузок Visual Studio" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Выбор рабочей нагрузки "Разработка классических приложений .NET"</p>
+                            </div>
+
+                            <p>После установки среды и всех ее компонентов, запустим Visual Studio и создадим проект графического приложения. На стартовом экране выберем <strong>Create a new project</strong> (Создать новый проект).</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.9.png" alt="Стартовое окно Visual Studio" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Создание нового проекта</p>
+                            </div>
+
+                            <p>На следующем окне в качестве типа проекта выберем <strong>Windows Forms App</strong>:</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.1.png" alt="Выбор шаблона проекта" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Выбор шаблона "Windows Forms App"</p>
+                            </div>
+
+                            <p>Стоит отметить, что среди шаблонов можно увидеть еще тип <em>Windows Forms App (.NET Framework)</em> - его НЕ надо выбирать, необходим именно тип <strong>Windows Forms App</strong>.</p>
+                            
+                            <p>Далее на следующем этапе нам будет предложено указать имя проекта и каталог, где будет располагаться проект. В поле <strong>Project Name</strong> дадим проекту какое-либо название. В моем случае это <code>HelloApp</code>.</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.8.png" alt="Настройка имени и расположения проекта" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Настройка параметров проекта</p>
+                            </div>
+
+                            <p>На следующем окне Visual Studio предложит нам выбрать версию .NET, которая будет использоваться для проекта. Выберем последнюю на данный момент версию - .NET и нажмем на кнопку Create (Создать) для создания проекта.</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.10.png" alt="Выбор версии .NET Framework" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Выбор версии .NET</p>
+                            </div>
+
+                            <p>После этого Visual Studio откроет наш проект с созданными по умолчанию файлами:</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.11.png" alt="Структура проекта в Visual Studio" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Окно Visual Studio с созданным проектом</p>
+                            </div>
+
+                            <p>Справа находится окно Solution Explorer, в котором можно увидеть структуру нашего проекта. Практически это тот же проект, который создается с помощью .NET CLI:</p>
+                            <ul>
+                                <li><strong>Dependencies</strong> - этот узел содержит сборки dll, которые добавлены в проект по умолчанию. Эти сборки как раз содержат классы библиотеки .NET, которые будет использовать C#.</li>
+                                <li><strong>Form1.Designer.cs</strong>: он содержит определение компонентов формы, добавленных на форму в графическом дизайнере.</li>
+                                <li>Далее идет файл единственной в проекте формы - <strong>Form1.cs</strong>, который по умолчанию открыт в центральном окне.</li>
+                                <li><strong>Program.cs</strong>: определяет точку входа в приложение.</li>
+                            </ul>
+
+                            <h3>Запуск приложения</h3>
+                            <p>Чтобы запустить приложение в режиме отладки, нажмем на клавишу F5 или на зеленую стрелочку на панели Visual Studio.</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.13.png" alt="Кнопка запуска проекта" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Запуск проекта</p>
+                            </div>
+
+                            <p>После этого запустится пустая форма Form1 по умолчанию.</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.12.png" alt="Запущенное приложение" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Запущенная форма приложения</p>
+                            </div>
+
+                            <p>После запуска приложения студия компилирует его в файл с расширением exe. Найти данный файл можно, зайдя в папку проекта и далее в каталог <code>\\bin\\Debug\\net8.0-windows</code>.</p>
+                            <p>Рассмотрев вкратце создание проекта графического приложения, мы можем перейти к обзору основных компонентов и начнем мы с форм.</p>
+                        `
+                    },
+                    {
+                        title: "Создание графического приложения",
+                        content: `
+                            <h1>Создание графического приложения</h1>
+                            <h2>Графический редактор Windows Forms</h2>
+                            <p>Одним из преимуществ разработки в Visual Studio приложений Windows Forms является наличие графического редактора, который позволяет в графическом виде представить создаваемую форму и в принципе упрощает работу с графическими компонентами.</p>
+                            
+                            <p>Для открытия формы в режиме графического дизайнера нажмем в структуре проекта на файл <code>Form1.cs</code> либо левой кнопкой мыши двойным кликом, либо правой кнопкой мыши и в появившемся контекстном меню выберем <strong>View Designer</strong> (также можно использовать комбинацию клавиш Shift+F7).</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.2.png" alt="Открытие дизайнера форм" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Открытие формы в графическом дизайнере</p>
+                            </div>
+
+                            <p>После этого в Visual Studio откроется выбранная форма в графическом виде. В то же время следует отметить, что на более слабых компьютерах окно дизайнера можно открываться довольно долго, а на некоторых - довольно слабых компьютерах может и вообще не открыться.</p>
+                            
+                            <p>При выборе формы в окне дизайнера внизу справа под структурой проекта мы сможем найти окно <strong>Properties</strong> (Свойства). Так как у меня в данный момент выбрана форма как элемент управления, то в этом поле отображаются свойства, связанные с формой.</p>
+                            
+                            <p>Теперь найдем в этом окне свойство формы Text и изменим его значение на любое другое. Таким образом мы поменяли заголовок формы. И подобным образом мы можем поменять другие свойства формы, которые доступны в окне свойств.</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.3.png" alt="Окно свойств формы" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Редактирование свойств формы в окне Properties</p>
+                            </div>
+
+                            <p>Но Visual Studio имеет еще одну связанную функциональность. Она обладает панелью графических инструментов. И мы можем, вместо создания элементов управления в коде C#, просто переносить их на форму с панели инструментов с помощью мыши. Так, перенесем на форму какой-нибудь элемент управления, например, кнопку. Для этого найдем в левой части Visual Studio вкладку <strong>Toolbox</strong> (Панель инструментов). Нажмем на эту вкладку, и у нас откроется панель с элементами, откуда мы можем с помощью мыши перенести на форму любой элемент:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.4.png" alt="Панель инструментов Toolbox" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Панель элементов управления (Toolbox)</p>
+                            </div>
+
+                            <p>Найдем среди элементов кнопку и, захватив ее указателем мыши, перенесем на форму:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.5.png" alt="Добавление кнопки на форму" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Добавление кнопки и ее свойства</p>
+                            </div>
+
+                            <p>Причем при выборе кнопки она открывается в окне свойств и, как и для всей формы, для кнопки в окне свойств мы можем изменить значения различных свойств.</p>
+                            
+                            <p>Кроме того, если после переноса кнопки на форму мы откроем файл <code>Form1.Designer.cs</code>, то увидим там automatically сгенерированный код:</p>
+
+                            <pre><code class="language-csharp">namespace HelloApp
+{
+    partial class Form1
+    {
+        /// &lt;summary&gt;
+        ///  Required designer variable.
+        /// &lt;/summary&gt;
+        private System.ComponentModel.IContainer components = null;
+
+        /// &lt;summary&gt;
+        ///  Clean up any resources being used.
+        /// &lt;/summary&gt;
+        /// &lt;param name="disposing"&gt;true if managed resources should be disposed; otherwise, false.&lt;/param&gt;
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// &lt;summary&gt;
+        ///  Required method for Designer support - do not modify
+        ///  the contents of this method with the code editor.
+        /// &lt;/summary&gt;
+        private void InitializeComponent()
+        {
+            this.button1 = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(312, 187);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(94, 29);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button1);
+            this.Name = "Form1";
+            this.Text = "METANIT.COM";
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Button button1;
+    }
+}</code></pre>
+
+                            <p>Мы видим, что в класс Form1 была добавлена переменная <code>button1</code> типа Button и для этой переменной, как и для объекта формы, задан ряд свойств. И если в окне свойств мы поменяем значения этих свойств, то в этом файле также изменятся их значения. Как в случае с текстом формы:</p>
+                            
+                            <pre><code class="language-csharp">this.Text = "METANIT.COM";</code></pre>
+
+                            <h3>Обработка событий</h3>
+                            <p>Это визуальная часть. Теперь приступим к самому программированию. Добавим простейший код на языке C#, который бы выводил сообщение по нажатию кнопки. Для этого перейдем в файл кода <code>Form1.cs</code>, который связан с этой формой. По умолчанию после создания проекта он имеет код типа следующего:</p>
+
+                            <pre><code class="language-csharp">namespace HelloApp
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+    }
+}</code></pre>
+
+                            <p>Изменим этот код следующим образом:</p>
+
+                            <pre><code class="language-csharp">namespace HelloApp
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+
+            button1.Click += button1_Click;
+        }
+
+        private void button1_Click(object? sender, EventArgs e)
+        {
+            MessageBox.Show("Привет");
+        }
+    }
+}</code></pre>
+
+                            <p>Кнопка обладает событием <code>Click</code>, которое генерируется при нажатии. В данном случае в конструкторе формы мы подвязываем к кнопке button1 в качестве обработчика события нажатия метод <code>button1_Click</code>, в котором с помощью метода <code>MessageBox.Show</code> выводит сообщение. Текст сообщения передается в метод в качестве параметра.</p>
+                            <p>Стоит отметить, что графический дизайнер позволяет автоматически сгенерировать обработчик нажатия кнопки. Для этого надо в окне дизайнера нажать на кнопку на форме двойным щелчком мыши.</p>
+                            <p>Теперь запустим проект и мы увидим форму с кнопкой, на которую мы можем нажать и получить сообщение:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/1.6.png" alt="Результат выполнения программы" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Результат выполнения программы</p>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Практическая работа",
+                        content: `
+                            <h1>Практическая работа: Приложение "Счетчик кликов"</h1>
+                            <p>В этой самостоятельной работе вам предстоит закрепить полученные знания, создав простое интерактивное приложение. Мы сделаем счетчик, который будет увеличивать значение при нажатии на кнопку.</p>
+
+                            <h3>Цель работы</h3>
+                            <ul>
+                                <li>Отработать навыки создания проекта в Visual Studio.</li>
+                                <li>Научиться добавлять элементы управления (кнопки, метки) на форму и настраивать их свойства.</li>
+                                <li>Написать логику обработки события нажатия на кнопку (Click).</li>
+                            </ul>
+
+                            <h3>Пошаговое задание</h3>
+                            <ol>
+                                <li><strong>Создайте новый проект</strong> типа "Windows Forms App" и назовите его <code>ClickCounter</code>.</li>
+                                <li><strong>Настройте главную форму</strong>:
+                                    <ul>
+                                        <li>Измените свойство <code>Text</code> формы на <em>"Счетчик кликов"</em>.</li>
+                                        <li>Измените стартовую позицию (<code>StartPosition</code>) на <code>CenterScreen</code>.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Добавьте элементы управления</strong>:
+                                    <ul>
+                                        <li>Откройте Панель элементов (Toolbox) и перетащите на форму элемент <strong>Label</strong>. Измените его текст по умолчанию на <em>"0"</em>, увеличьте шрифт (свойство <code>Font</code>) до 24-30 пунктов, чтобы цифру было хорошо видно, и дайте элементу понятное имя (свойство <code>Name</code>), например, <code>lblCounter</code>.</li>
+                                        <li>Перетащите на форму элемент <strong>Button</strong>. Измените текст (свойство <code>Text</code>) на <em>"Кликни меня!"</em>, а имя (свойство <code>Name</code>) — на <code>btnClick</code>.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Добавьте логику</strong>:
+                                    <ul>
+                                        <li>Дважды кликните по вашей кнопке <code>btnClick</code> в дизайнере, чтобы Visual Studio автоматически создала обработчик события.</li>
+                                        <li>В коде формы (файл <code>Form1.cs</code>) создайте переменную целочисленного типа (например, <code>int count = 0;</code>) <strong>вне</strong> метода обработчика, но внутри класса формы. Это нужно для того, чтобы значение сохранялось между кликами.</li>
+                                        <li>Внутри обработчика нажатия кнопки увеличивайте значение этой переменной на 1 и выводите ее в текстовую метку с помощью: <code>lblCounter.Text = count.ToString();</code>.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Запустите приложение</strong> (кнопка F5) и проверьте, что счетчик работает корректно при каждом нажатии!</li>
+                            </ol>
+
+                            <h3>Усложненное задание (со звездочкой)</h3>
+                            <p>Если вы легко справились с базовым заданием, попробуйте добавить следующие функции:</p>
+                            <ul>
+                                <li>Добавьте вторую кнопку "Сброс" (<code>btnReset</code>), которая будет обнулять переменную счетчика и возвращать текст метки к "0".</li>
+                                <li>Сделайте так, чтобы при достижении 10 кликов, цвет текста (свойство <code>ForeColor</code>) метки менялся на красный, а при достижении 20 — на зеленый. (<em>Подсказка: используйте конструкцию <code>if-else</code> и класс <code>Color.Red</code></em>).</li>
+                            </ul>
+
+                            <div class="my-6 p-4 bg-sky-50 rounded-lg border border-sky-200">
+                                <h4 class="font-bold text-sky-800 mt-0">💡 Подсказка по коду</h4>
+                                <pre><code class="language-csharp">public partial class Form1 : Form
+{
+    // Переменная для хранения количества кликов (объявляется внутри класса, но вне методов)
+    int clickCount = 0;
+
+    public Form1()
+    {
+        InitializeComponent();
+    }
+
+    private void btnClick_Click(object sender, EventArgs e)
+    {
+        clickCount++; // Увеличиваем значение на 1
+        lblCounter.Text = clickCount.ToString(); // Конвертируем число в строку и обновляем текст метки
+    }
+}</code></pre>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            {
+                chapter: "Глава 2. Работа с формами",
+                lessons: [
+                    {
+                        title: "Основы форм",
+                        content: `
+                            <h1>Основы форм</h1>
+                            <p>Внешний вид приложения является нам преимущественно через формы. Формы являются основными строительными блоками. Они предоставляют контейнер для различных элементов управления. А механизм событий позволяет элементам формы отзываться на ввод пользователя, и, таким образом, взаимодействовать с пользователем.</p>
+                            
+                            <p>При открытии проекта в Visual Studio в графическом редакторе мы можем увидеть визуальную часть формы - ту часть, которую мы видим после запуска приложения и куда мы переносим элементы с панели управления. Но на самом деле форма скрывает мощный функционал, состоящий из методов, свойств, событий и прочее. Рассмотрим основные свойства форм.</p>
+                            
+                            <p>Если мы запустим приложение, то нам отобразится одна пустая форма. Однако даже такой простой проект с пустой формой имеет несколько компонентов:</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/2.3.png" alt="Компоненты формы" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Структура файлов формы</p>
+                            </div>
+
+                            <p>Несмотря на то, что мы видим только форму, но стартовой точкой входа в графическое приложение является класс Program, расположенный в файле <code>Program.cs</code>:</p>
+                            
+                            <pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace HelloApp
+{
+    static class Program
+    {
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());
+        }
+    }
+}</code></pre>
+
+                            <p>Сначала программой запускается данный класс, затем с помощью выражения <code>Application.Run(new Form1())</code> он запускает форму Form1. Если вдруг мы захотим изменить стартовую форму в приложении на какую-нибудь другую, то нам надо изменить в этом выражении Form1 на соответствующий класс формы.</p>
+
+                            <p>Сама форма сложна по содержанию. Она делится на ряд компонентов. Так, в структуре проекта есть файл <code>Form1.Designer.cs</code>, который выглядит примерно так:</p>
+
+                            <pre><code class="language-csharp">namespace HelloApp
+{
+    partial class Form1
+    {
+        /// &lt;summary&gt;
+        /// Required designer variable.
+        /// &lt;/summary&gt;
+        private System.ComponentModel.IContainer components = null;
+
+        /// &lt;summary&gt;
+        /// Clean up any resources being used.
+        /// &lt;/summary&gt;
+        /// &lt;param name="disposing"&gt;true if managed resources should be disposed; otherwise, false.&lt;/param&gt;
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// &lt;summary&gt;
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// &lt;/summary&gt;
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Name = "Form1";
+            this.Text = "Привет мир!";
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+    }
+}</code></pre>
+
+                            <p>Здесь объявляется частичный класс формы Form1, которая имеет два метода: <code>Dispose()</code>, который выполняет роль деструктора объекта, и <code>InitializeComponent()</code>, который устанавливает начальные значения свойств формы.</p>
+                            <p>При добавлении элементов управления, например, кнопок, их описание также добавляется в этот файл.</p>
+                            <p>Но на практике мы редко будем сталкиваться с этим классом, так как они выполняет в основном дизайнерские функции - установка свойств объектов, установка переменных.</p>
+                            
+                            <p>Еще один файл - <code>Form1.resx</code> - хранит ресурсы формы. Как правило, ресурсы используются для создания однообразных форм сразу для нескольких языковых культур.</p>
+                            
+                            <p>И более важный файл - <code>Form1.cs</code>, который в структуре проекта называется просто Form1, содержит код или программную логику формы:</p>
+
+                            <pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace HelloApp
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+    }
+}</code></pre>
+
+                            <p>По умолчанию здесь есть только конструктор формы, в котором просто вызывается метод <code>InitializeComponent()</code>, объявленный в файле дизайнера <code>Form1.Designer.cs</code>. Именно с этим файлом мы и будем больше работать.</p>
+                        `
+                    },
+                    {
+                        title: "Основные свойства форм",
+                        content: `
+                            <h1>Основные свойства форм</h1>
+                            <p>С помощью специального окна Properties (Свойства) справа Visual Studio предоставляет нам удобный интерфейс для управления свойствами элемента:</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/2.1.png" alt="Окно свойств Properties" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Окно свойств (Properties)</p>
+                            </div>
+
+                            <p>Большинство этих свойств оказывает влияние на визуальное отображение формы. Пробежимся по основным свойствам:</p>
+                            <ul>
+                                <li><strong>Name</strong>: устанавливает имя формы - точнее имя класса, который наследуется от класса <code>Form</code></li>
+                                <li><strong>BackColor</strong>: указывает на фоновый цвет формы. Щелкнув на это свойство, мы сможем выбрать тот цвет, который нам подходит из списка предложенных цветов или цветовой палитры</li>
+                                <li><strong>BackgroundImage</strong>: указывает на фоновое изображение формы</li>
+                                <li><strong>BackgroundImageLayout</strong>: определяет, как изображение, заданное в свойстве BackgroundImage, будет располагаться на форме.</li>
+                                <li><strong>ControlBox</strong>: указывает, отображается ли меню формы. В данном случае под меню понимается меню самого верхнего уровня, где находятся иконка приложения, заголовок формы, а также кнопки минимизации формы и крестик. Если данное свойство имеет значение false, то мы не увидим ни иконку, ни крестика, с помощью которого обычно закрывается форма</li>
+                                <li><strong>Cursor</strong>: определяет тип курсора, который используется на форме</li>
+                                <li><strong>Enabled</strong>: если данное свойство имеет значение false, то она не сможет получать ввод от пользователя, то есть мы не сможем нажать на кнопки, ввести текст в текстовые поля и т.д.</li>
+                                <li><strong>Font</strong>: задает шрифт для всей формы и всех помещенных на нее элементов управления. Однако, задав у элементов формы свой шрифт, мы можем тем самым переопределить его</li>
+                                <li><strong>ForeColor</strong>: цвет шрифта на форме</li>
+                                <li><strong>FormBorderStyle</strong>: указывает, как будет отображаться граница формы и строка заголовка. Устанавливая данное свойство в None можно создавать внешний вид приложения произвольной формы</li>
+                                <li><strong>HelpButton</strong>: указывает, отображается ли кнопка справки формы</li>
+                                <li><strong>Icon</strong>: задает иконку формы</li>
+                                <li><strong>Location</strong>: определяет положение по отношению к верхнему левому углу экрана, если для свойства <code>StartPosition</code> установлено значение <code>Manual</code></li>
+                                <li><strong>MaximizeBox</strong>: указывает, будет ли доступна кнопка максимизации окна в заголовке формы</li>
+                                <li><strong>MinimizeBox</strong>: указывает, будет ли доступна кнопка минимизации окна</li>
+                                <li><strong>MaximumSize</strong>: задает максимальный размер формы</li>
+                                <li><strong>MinimumSize</strong>: задает минимальный размер формы</li>
+                                <li><strong>Opacity</strong>: задает прозрачность формы</li>
+                                <li><strong>Size</strong>: определяет начальный размер формы</li>
+                                <li><strong>StartPosition</strong>: указывает на начальную позицию, с которой форма появляется на экране</li>
+                                <li><strong>Text</strong>: определяет заголовок формы</li>
+                                <li><strong>TopMost</strong>: если данное свойство имеет значение <code>true</code>, то форма всегда будет находиться поверх других окон</li>
+                                <li><strong>Visible</strong>: видима ли форма, если мы хотим скрыть форму от пользователя, то можем задать данному свойству значение <code>false</code></li>
+                                <li><strong>WindowState</strong>: указывает, в каком состоянии форма будет находиться при запуске: в нормальном, максимизированном или минимизированном</li>
+                            </ul>
+
+                            <h3>Программная настройка свойств</h3>
+                            <p>С помощью значений свойств в окне Свойства мы можем изменить по своему усмотрению внешний вид формы, но все то же самое мы можем сделать динамически в коде. Перейдем к коду, для этого нажмем правой кнопкой мыши на форме и выберем в появившемся контекстном меню View Code (Просмотр кода). Перед нами открывается файл кода <code>Form1.cs</code>. Изменим его следующим образом:</p>
+
+<pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace HelloApp
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+            Text = "Hello World!";
+            this.BackColor = Color.Aquamarine;
+            this.Width = 250;
+            this.Height = 250;
+        }
+    }
+}</code></pre>
+
+                            <p>В данном случае мы настроили несколько свойств отображения формы: заголовок, фоновый цвет, ширину и высоту. При использовании конструктора формы надо учитывать, что весь остальной код должен идти после вызова метода <code>InitializeComponent()</code>, поэтому все установки свойств здесь расположены после этого метода.</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/2.2.png" alt="Измененная форма" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Результат программной настройки свойств</p>
+                            </div>
+
+                            <h3>Установка размеров формы</h3>
+                            <p>Для установки размеров формы можно использовать такие свойства как Width/Height или Size. Width/Height принимают числовые значения, как в вышеприведенном примере. При установке размеров через свойство Size, нам надо присвоить свойству объект типа Size:</p>
+
+<pre><code class="language-csharp">this.Size = new Size(200, 150);</code></pre>
+                            <p>Объект Size в свою очередь принимает в конструкторе числовые значения для установки ширины и высоты.</p>
+
+                            <h3>Начальное расположение формы</h3>
+                            <p>Начальное расположение формы устанавливается с помощью свойства <code>StartPosition</code>, которое может принимать одно из следующих значений:</p>
+                            <ul>
+                                <li><strong>Manual</strong>: Положение формы определяется свойством Location</li>
+                                <li><strong>CenterScreen</strong>: Положение формы в центре экрана</li>
+                                <li><strong>WindowsDefaultLocation</strong>: Позиция формы на экране задается системой Windows, а размер определяется свойством Size</li>
+                                <li><strong>WindowsDefaultBounds</strong>: Начальная позиция и размер формы на экране задается системой Windows</li>
+                                <li><strong>CenterParent</strong>: Положение формы устанавливается в центре родительского окна</li>
+                            </ul>
+                            <p>Все эти значения содержатся в перечислении <code>FormStartPosition</code>, поэтому, чтобы, например, установить форму в центре экрана, нам надо прописать так:</p>
+
+<pre><code class="language-csharp">this.StartPosition = FormStartPosition.CenterScreen;</code></pre>
+
+                            <h3>Фон и цвета формы</h3>
+                            <p>Чтобы установить цвет как фона формы, так и шрифта, нам надо использовать цветовое значение, хранящееся в структуре Color:</p>
+
+<pre><code class="language-csharp">this.BackColor = Color.Aquamarine;
+this.ForeColor = Color.Red;</code></pre>
+
+                            <p>Кроме того, мы можем в качестве фона задать изображение в свойстве <code>BackgroundImage</code>, выбрав его в окне свойств или в коде, указав путь к изображению:</p>
+
+<pre><code class="language-csharp">this.BackgroundImage = Image.FromFile("C:\\\\Users\\\\Eugene\\\\Pictures\\\\3332.jpg");</code></pre>
+
+                            <p>Чтобы должным образом настроить нужное нам отображение фоновой картинки, надо использовать свойство <code>BackgroundImageLayout</code>, которое может принимать одно из следующих значений:</p>
+                            <ul>
+                                <li><strong>None</strong>: Изображение помещается в верхнем левом углу формы и сохраняет свои первоначальные значения</li>
+                                <li><strong>Tile</strong>: Изображение располагается на форме в виде мозаики</li>
+                                <li><strong>Center</strong>: Изображение располагается по центру формы</li>
+                                <li><strong>Stretch</strong>: Изображение растягивается до размеров формы без сохранения пропорций</li>
+                                <li><strong>Zoom</strong>: Изображение растягивается до размеров формы с сохранением пропорций</li>
+                            </ul>
+
+                            <p>Например, расположим форму по центру экрана:</p>
+<pre><code class="language-csharp">this.StartPosition = FormStartPosition.CenterScreen;</code></pre>
+                        `
+                    },
+                    {
+                        title: "Добавление форм. Взаимодействие между формами",
+                        content: `
+                            <h1>Добавление форм. Взаимодействие между формами</h1>
+                            <p>Чтобы добавить еще одну форму в проект, нажмем на имя проекта в окне Solution Explorer (Обозреватель решений) правой кнопкой мыши и выберем <strong>Add (Добавить) -&gt; Windows Form...</strong></p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/2.4.png" alt="Добавление новой формы" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Добавление новой формы через Обозреватель решений</p>
+                            </div>
+
+                            <p>Дадим новой форме какое-нибудь имя, например, <code>Form2.cs</code>:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/2.5.png" alt="Задание имени новой формы" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Указание имени для новой формы</p>
+                            </div>
+
+                            <p>Итак, у нас в проект была добавлена вторая форма. Теперь попробуем осуществить взаимодействие между двумя формами. Допустим, первая форма по нажатию на кнопку будет вызывать вторую форму. Во-первых, добавим на первую форму Form1 кнопку и двойным щелчком по кнопке перейдем в файл кода. Итак, мы попадем в обработчик события нажатия кнопки, который создается по умолчанию после двойного щелчка по кнопке:</p>
+
+<pre><code class="language-csharp">private void button1_Click(object sender, EventArgs e)
+{
+
+}</code></pre>
+
+                            <p>Теперь добавим в него код вызова второй формы. У нас вторая форма называется Form2, поэтому сначала мы создаем объект данного класса, а потом для его отображения на экране вызываем метод <code>Show()</code>:</p>
+
+<pre><code class="language-csharp">private void button1_Click(object sender, EventArgs e)
+{
+    Form2 newForm = new Form2();
+    newForm.Show();
+}</code></pre>
+
+                            <p>Теперь сделаем наоборот - чтобы вторая форма воздействовала на первую. Пока вторая форма не знает о существовании первой. Чтобы это исправить, надо второй форме как-то передать сведения о первой форме. Для этого воспользуемся передачей ссылки на форму в конструкторе.</p>
+
+                            <p>Итак перейдем ко второй форме и перейдем к ее коду - нажмем правой кнопкой мыши на форму и выберем View Code (Просмотр кода). Пока он пустой и содержит только конструктор. Поскольку C# поддерживает перегрузку методов, то мы можем создать несколько методов и конструкторов с разными параметрами и в зависимости от ситуации вызывать один из них. Итак, изменим файл кода второй формы на следующий:</p>
+
+<pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace HelloApp
+{
+    public partial class Form2 : Form
+    {
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
+        public Form2(Form1 f)
+        {
+            InitializeComponent();
+            f.BackColor = Color.Yellow;
+        }
+    }
+}</code></pre>
+
+                            <p>Фактически мы только добавили здесь новый конструктор <code>public Form2(Form1 f)</code>, в котором мы получаем первую форму и устанавливаем ее фон в желтый цвет. Теперь перейдем к коду первой формы, где мы вызывали вторую форму и изменим его на следующий:</p>
+
+<pre><code class="language-csharp">private void button1_Click(object sender, EventArgs e)
+{
+    Form2 newForm = new Form2(this);
+    newForm.Show();
+}</code></pre>
+
+                            <p>Поскольку в данном случае ключевое слово <code>this</code> представляет ссылку на текущий объект - объект Form1, то при создании второй формы она будет получать ее (ссылку) и через нее управлять первой формой.</p>
+                            <p>Теперь после нажатия на кнопку у нас будет создана вторая форма, которая сразу изменит цвет первой формы.</p>
+
+                            <p>Мы можем также создавать объекты и текущей формы:</p>
+
+<pre><code class="language-csharp">private void button1_Click(object sender, EventArgs e)
+{
+    Form1 newForm1 = new Form1();
+    newForm1.Show();
+         
+    Form2 newForm2 = new Form2(newForm1);
+    newForm2.Show();
+}</code></pre>
+
+                            <div class="my-6 p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                <h4 class="font-bold text-amber-800 mt-0 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                    Важное замечание
+                                </h4>
+                                <p class="text-amber-900 mb-0">При работе с несколькими формами надо учитывать, что одна из них является главной - которая запускается первой в файле <code>Program.cs</code>. Если у нас одновременно открыта куча форм, то при закрытии главной закрывается все приложение и вместе с ним все остальные формы.</p>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "События в Windows Forms. События формы",
+                        content: `
+                            <h1>События в Windows Forms. События формы</h1>
+                            <p>Для взаимодействия с пользователем в Windows Forms используется механизм событий. События в Windows Forms представляют стандартные события на C#, только применяемые к визуальным компонентам и подчиняются тем же правилам, что события в C#. Но создание обработчиков событий в Windows Forms все же имеет некоторые особенности.</p>
+                            
+                            <p>Прежде всего в WinForms есть некоторый стандартный набор событий, который по большей части имеется у всех визуальных компонентов. Отдельные элементы добавляют свои события, но принципы работы с ними будут похожие. Чтобы посмотреть все события элемента, нам надо выбрать этот элемент в поле графического дизайнера и перейти к вкладке событий на панели форм. Например, события формы:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/2.7.png" alt="Вкладка событий в окне Properties" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Вкладка событий (Events) в окне свойств</p>
+                            </div>
+
+                            <p>Чтобы добавить обработчик, можно просто два раза нажать по пустому полю рядом с названием события, и после этого Visual Studio автоматически сгенерирует обработчик события. Например, нажмем для создания обработчика для события <code>Load</code>:</p>
+
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/2.8.png" alt="Событие Load формы" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Генерация обработчика события Load</p>
+                            </div>
+
+                            <p>И в этом поле отобразится название метода обработчика события Load. По умолчанию он называется <code>Form1_Load</code>.</p>
+                            <p>Если мы перейдем в файл кода формы <code>Form1.cs</code>, то увидим автосгенерированный метод <code>Form1_Load</code>:</p>
+
+<pre><code class="language-csharp">public partial class Form1 : Form
+{
+    public Form1()
+    {
+        InitializeComponent();
+    }
+
+    private void Form1_Load(object sender, EventArgs e)
+    {
+
+    }
+}</code></pre>
+
+                            <p>И при каждой загрузке формы будет срабатывать код в обработчике <code>Form1_Load</code>.</p>
+                            <p>Как правило, большинство обработчиков различных визуальных компонентов имеют два параметра: <code>sender</code> - объект, инициировавший событие, и аргумент, хранящий информацию о событии (в данном случае <code>EventArgs e</code>).</p>
+                            
+                            <p>Но это только обработчик. Добавление же обработчика, созданного таким образом, производится в файле <code>Form1.Designer.cs</code>:</p>
+
+<pre><code class="language-csharp">namespace HelloApp
+{
+    partial class Form1
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Name = "Form1";
+            // добавление обработчика 
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.ResumeLayout(false);
+        }
+    }
+}</code></pre>
+
+                            <p>Для добавления обработчика используется стандартный синтаксис C#: <code>this.Load += new System.EventHandler(this.Form1_Load)</code></p>
+                            <p>Поэтому если мы захотим удалить созданный подобным образом обработчик, то нам надо не только удалить метод из кода формы в <code>Form1.cs</code>, но и удалить добавление обработчика в этом файле.</p>
+                            
+                            <p>Однако мы можем добавлять обработчики событий и программно, например, в конструкторе формы:</p>
+
+<pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace HelloApp
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+            this.Load += LoadEvent;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+        }
+
+        private void LoadEvent(object sender, EventArgs e)
+        {
+            this.BackColor = Color.Yellow;
+        }
+    }
+}</code></pre>
+
+                            <p>Кроме ранее созданного обработчика <code>Form1_Load</code> здесь также добавлен другой обработчик загрузки формы: <code>this.Load += LoadEvent;</code>, который устанавливает в качестве фона желтый цвет.</p>
+                        `
+                    },
+                    {
+                        title: "Создание непрямоугольных форм. Закрытие формы",
+                        content: `
+                            <h1>Создание непрямоугольных форм. Закрытие формы</h1>
+                            <p>По умолчанию все формы в Windows Forms являются прямоугольными. Однако мы можем создавать и непрямоугольные произвольные формы. Для этого используется свойство <code>Region</code>. В качестве значения оно принимает объект одноименного класса Region.</p>
+                            
+                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
+                                <img src="/img/2.6.png" alt="Непрямоугольная форма" class="mx-auto rounded border border-slate-300 shadow-md">
+                                <p class="text-sm mt-2">Круглая форма с кнопкой закрытия</p>
+                            </div>
+
+                            <p>При создании непрямоугольных форм, как правило, не используются границы формы, так как границы задаются этим объектом Region. Чтобы убрать границы формы, надо присвоить у формы свойству <code>FormBorderStyle</code> значение <code>None</code>.</p>
+                            
+                            <p>И еще один аспект, который надо учитывать, заключается в перемещении, закрытии, максимизации и минимизации форм. То есть в данном случае, как в обычной форме, мы не сможем нажать на крестик, чтобы закрыть форму, не сможем ее переместить на новое место. Поэтому нам надо дополнительно определять для этого программную логику.</p>
+                            
+                            <p>Итак, перейдем к коду формы и изменим его следующим образом:</p>
+
+<pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace HelloApp
+{
+    public partial class Form1 : Form
+    {
+        Point moveStart; // точка для перемещения
+
+        public Form1()
+        {
+            InitializeComponent();
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.BackColor = Color.Yellow;
+            Button button1 = new Button
+            {
+                Location = new Point
+                {
+                    X = this.Width / 3,
+                    Y = this.Height / 3
+                }
+            };
+            button1.Text = "Закрыть";
+            button1.Click += button1_Click;
+            this.Controls.Add(button1); // добавляем кнопку на форму
+            this.Load += Form1_Load;
+            this.MouseDown += Form1_MouseDown;
+            this.MouseMove += Form1_MouseMove;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            System.Drawing.Drawing2D.GraphicsPath myPath = new System.Drawing.Drawing2D.GraphicsPath();
+            // создаем эллипс с высотой и шириной формы
+            myPath.AddEllipse(0, 0, this.Width, this.Height);
+            // создаем с помощью элипса ту область формы, которую мы хотим видеть
+            Region myRegion = new Region(myPath);
+            // устанавливаем видимую область
+            this.Region = myRegion;
+        }
+
+        private void Form1_MouseDown(object sender, MouseEventArgs e)
+        {
+            // если нажата левая кнопка мыши
+            if (e.Button == MouseButtons.Left)
+            {
+                moveStart = new Point(e.X, e.Y);
+            }
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            // если нажата левая кнопка мыши
+            if ((e.Button & MouseButtons.Left) != 0)
+            {
+                // получаем новую точку положения формы
+                Point deltaPos = new Point(e.X - moveStart.X, e.Y - moveStart.Y);
+                // устанавливаем положение формы
+                this.Location = new Point(this.Location.X + deltaPos.X,
+                  this.Location.Y + deltaPos.Y);
+            }
+        }
+    }
+}</code></pre>
+
+                            <p>Создание области формы происходит в обработчике события <code>Form1_Load</code>. Для создания области используется графический путь - объект класса <code>System.Drawing.Drawing2D.GraphicsPath</code>, в который добавляется эллипс. Графический путь позволяет создать фигуру любой формы, поэтому, если мы захотим форму в виде морской звезды, то нам просто надо должным образом настроить используемый графический путь.</p>
+                            
+                            <p>Для закрытия формы в обработчике события нажатия кнопки <code>button1_Click</code> форма закрывается программным образом: <code>this.Close()</code></p>
+                            
+                            <p>Для перемещения формы обрабатываются два события формы - событие нажатия кнопки мыши и событие перемещения указателя мыши.</p>
+                        `
+                    },
+                    {
+                        title: "Практические работы",
+                        content: `
+                            <h1>Практические работы к Главе 2</h1>
+                            <p>Для закрепления знаний, полученных во второй главе, выполните следующие практические задания. Они помогут вам лучше понять свойства форм, работу с событиями и взаимодействие между несколькими окнами.</p>
+
+                            <hr class="my-8 border-slate-200">
+
+                            <h3>Работа 1: «Форма-хамелеон» (Свойства и События)</h3>
+                            <p><strong>Цель:</strong> Научиться динамически изменять свойства формы при наступлении определенных событий.</p>
+                            <p><strong>Задание:</strong></p>
+                            <ol>
+                                <li>Создайте проект с одной формой.</li>
+                                <li>Установите начальный размер формы 400x400 пикселей, а стартовую позицию — по центру экрана.</li>
+                                <li>Добавьте обработчик события <strong>Click</strong> для самой формы (не для кнопки, а для пустой области формы).</li>
+                                <li>Напишите логику, чтобы при каждом клике мыши по форме её цвет фона (свойство <code>BackColor</code>) менялся на случайный цвет.</li>
+                                <li><strong>Дополнительно:</strong> При изменении цвета выводите в заголовок формы (свойство <code>Text</code>) текущий размер формы (например, <em>"Ширина: 400, Высота: 400"</em>).</li>
+                            </ol>
+                            <div class="my-4 p-4 bg-sky-50 rounded-lg border border-sky-200">
+                                <h4 class="font-bold text-sky-800 mt-0">💡 Подсказка</h4>
+                                <p class="text-sm mb-2 text-sky-900">Для генерации случайного цвета используйте класс <code>Random</code> и метод <code>Color.FromArgb()</code>:</p>
+<pre><code class="language-csharp">Random rnd = new Random();
+this.BackColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+this.Text = $"Ширина: {this.Width}, Высота: {this.Height}";</code></pre>
+                            </div>
+
+                            <hr class="my-8 border-slate-200">
+
+                            <h3>Работа 2: «Настройка профиля» (Взаимодействие форм)</h3>
+                            <p><strong>Цель:</strong> Понять, как передавать данные или ссылки между двумя разными формами.</p>
+                            <p><strong>Задание:</strong></p>
+                            <ol>
+                                <li>Создайте главную форму (<code>MainForm</code>) с меткой (Label), на которой написано <em>"Привет, Гость!"</em>, и кнопкой <em>"Войти"</em>.</li>
+                                <li>Создайте вторую форму (<code>LoginForm</code>) и разместите на ней текстовое поле (TextBox) для ввода имени и кнопку <em>"ОК"</em>.</li>
+                                <li>Сделайте так, чтобы при нажатии на "Войти" открывалась вторая форма.</li>
+                                <li>Реализуйте логику: когда пользователь вводит свое имя во второй форме и нажимает "ОК", вторая форма закрывается, а метка на главной форме меняется на <em>"Привет, [введенное имя]!"</em>.</li>
+                            </ol>
+                            <div class="my-4 p-4 bg-sky-50 rounded-lg border border-sky-200">
+                                <h4 class="font-bold text-sky-800 mt-0">💡 Подсказка</h4>
+                                <p class="text-sm mb-2 text-sky-900">В конструктор второй формы можно передать ссылку на первую форму, и сохранить её в поле класса, чтобы затем обратиться к её публичным свойствам или методам.</p>
+                            </div>
+
+                            <hr class="my-8 border-slate-200">
+
+                            <h3>Работа 3: «Кастомный виджет» (Непрямоугольная форма)</h3>
+                            <p><strong>Цель:</strong> Работа с классом <code>Region</code> и событиями мыши для кастомного перемещения окон.</p>
+                            <p><strong>Задание:</strong></p>
+                            <ol>
+                                <li>Сделайте форму без стандартных системных рамок (<code>FormBorderStyle = None</code>).</li>
+                                <li>Используя событие <code>Load</code>, задайте форме круглую форму (как в лекции про эллипс).</li>
+                                <li>Установите картинку в качестве фона (свойство <code>BackgroundImage</code>) с режимом растягивания <code>Zoom</code>.</li>
+                                <li>Добавьте на форму небольшую кнопку "X" (закрытие) в верхнюю или нижнюю часть круга.</li>
+                                <li>Добавьте логику для перемещения формы мышкой за любую её область с использованием событий <code>MouseDown</code> и <code>MouseMove</code>.</li>
+                            </ol>
+
+                            <hr class="my-8 border-slate-200">
+
+                            <h3>Работа 4: «Панель управления настройками» (Продвинутое взаимодействие)</h3>
+                            <p><strong>Цель:</strong> Объединить навыки работы с несколькими окнами и изменения свойств в реальном времени.</p>
+                            <p><strong>Задание:</strong></p>
+                            <ol>
+                                <li>У вас есть главная форма (<code>Form1</code>), на которой есть только одна кнопка <em>"Настройки"</em>. При нажатии открывается <code>Form2</code> (Панель управления).</li>
+                                <li>Разместите на <code>Form2</code> две кнопки: <em>"Сделать форму красной"</em> и <em>"Увеличить форму"</em>.</li>
+                                <li>Окна должны быть открыты одновременно (используйте <code>Show()</code>, а не <code>ShowDialog()</code>).</li>
+                                <li>Нажатия на кнопки во второй форме должны <strong>мгновенно</strong> менять цвет фона и размер первой (главной) формы.</li>
+                            </ol>
+                            <div class="my-4 p-4 bg-sky-50 rounded-lg border border-sky-200">
+                                <h4 class="font-bold text-sky-800 mt-0">💡 Подсказка</h4>
+                                <p class="text-sm mb-2 text-sky-900">Код второй формы может выглядеть так:</p>
+<pre><code class="language-csharp">public partial class Form2 : Form
+{
+    Form1 mainForm; // Поле для хранения ссылки на главную форму
+
+    public Form2(Form1 form)
+    {
+        InitializeComponent();
+        mainForm = form; // Сохраняем ссылку, переданную при открытии окна
+    }
+
+    private void btnRed_Click(object sender, EventArgs e)
+    {
+        mainForm.BackColor = Color.Red; // Меняем свойство первой формы
+    }
+}</code></pre>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            {
+                chapter: "Глава 3. Контейнеры в Windows Forms",
+                lessons: [
+                    { title: "Динамическое добавление элементов", content: "<h1>Динамическое добавление элементов</h1><p>Обучающий материал о программном создании кнопок: <code>Button btn = new Button(); this.Controls.Add(btn);</code></p>" },
+                    { title: "Элементы GroupBox, Panel и FlowLayoutPanel", content: "<h1>Элементы GroupBox, Panel и FlowLayoutPanel</h1><p>Контент лекции...</p>" },
+                    { title: "TableLayoutPanel", content: "<h1>TableLayoutPanel</h1><p>Контент лекции...</p>" },
+                    { title: "Размеры элементов и их позиционирование в контейнере", content: "<h1>Размеры элементов и их позиционирование в контейнере</h1><p>Anchor и Dock свойства. Контент лекции...</p>" },
+                    { title: "Панель вкладок TabControl и SplitContainer", content: "<h1>Панель вкладок TabControl и SplitContainer</h1><p>Контент лекции...</p>" }
+                ]
+            },
+            {
+                chapter: "Глава 4. Элементы управления",
+                lessons: [
+                    { title: "Кнопка", content: "<h1>Кнопка (Button)</h1><p>Материал про элемент Button...</p>" },
+                    { title: "Метки и ссылки", content: "<h1>Метки и ссылки</h1><p>Label и LinkLabel...</p>" },
+                    { title: "Текстовое поле TextBox", content: "<h1>Текстовое поле TextBox</h1><p>Материал...</p>" },
+                    { title: "Элемент MaskedTextBox", content: "<h1>Элемент MaskedTextBox</h1><p>Материал...</p>" },
+                    { title: "Элементы Radiobutton и CheckBox", content: "<h1>Элементы Radiobutton и CheckBox</h1><p>Материал...</p>" },
+                    { title: "ListBox", content: "<h1>ListBox</h1><p>Материал...</p>" },
+                    { title: "Элемент ComboBox", content: "<h1>Элемент ComboBox</h1><p>Материал...</p>" },
+                    { title: "Привязка данных в ListBox и ComboBox", content: "<h1>Привязка данных</h1><p>Материал...</p>" },
+                    { title: "Элемент CheckedListBox", content: "<h1>Элемент CheckedListBox</h1><p>Материал...</p>" },
+                    { title: "Элементы NumericUpDown и DomainUpDown", content: "<h1>NumericUpDown и DomainUpDown</h1><p>Материал...</p>" },
+                    { title: "ImageList", content: "<h1>ImageList</h1><p>Материал...</p>" },
+                    { title: "ListView", content: "<h1>ListView</h1><p>Материал...</p>" },
+                    { title: "TreeView", content: "<h1>TreeView</h1><p>Материал...</p>" },
+                    { title: "TrackBar, Timer и ProgressBar", content: "<h1>TrackBar, Timer и ProgressBar</h1><p>Материал...</p>" },
+                    { title: "DateTimePicker и MonthCalendar", content: "<h1>DateTimePicker и MonthCalendar</h1><p>Материал...</p>" },
+                    { title: "PictureBox", content: "<h1>PictureBox</h1><p>Материал...</p>" },
+                    { title: "WebBrowser", content: "<h1>WebBrowser</h1><p>Материал...</p>" },
+                    { title: "Элемент NotifyIcon", content: "<h1>Элемент NotifyIcon</h1><p>Материал...</p>" },
+                    { title: "Окно сообщения MessageBox", content: "<h1>Окно сообщения MessageBox</h1><p>Материал...</p>" },
+                    { title: "OpenFileDialog и SaveFileDialog", content: "<h1>OpenFileDialog и SaveFileDialog</h1><p>Материал...</p>" },
+                    { title: "FontDialog и ColorDialog", content: "<h1>FontDialog и ColorDialog</h1><p>Материал...</p>" },
+                    { title: "ErrorProvider", content: "<h1>ErrorProvider</h1><p>Материал...</p>" }
+                ]
+            },
+            {
+                chapter: "Глава 5. Меню и панели инструментов",
+                lessons: [
+                    { title: "Панель инструментов ToolStrip", content: "<h1>Панель инструментов ToolStrip</h1><p>Материал...</p>" },
+                    { title: "Создание меню MenuStrip", content: "<h1>Создание меню MenuStrip</h1><p>Материал...</p>" },
+                    { title: "Строка состояния StatusStrip", content: "<h1>Строка состояния StatusStrip</h1><p>Материал...</p>" },
+                    { title: "Контекстное меню ContextMenuStrip", content: "<h1>Контекстное меню ContextMenuStrip</h1><p>Материал...</p>" }
+                ]
+            },
+            {
+                chapter: "Глава 6. Привязка и паттерн Model-View-ViewModel",
+                lessons: [
+                    { title: "Введение в привязку. Форматирование значения привязки", content: "<h1>Введение в привязку</h1><p>Материал...</p>" },
+                    { title: "Привязка объектов. Интерфейс INotifyPropertyChanged", content: "<h1>Привязка объектов</h1><p>Материал...</p>" },
+                    { title: "DataContext", content: "<h1>DataContext</h1><p>Материал...</p>" },
+                    { title: "Паттерн Model-View-ViewModel", content: "<h1>Паттерн Model-View-ViewModel (MVVM)</h1><p>Хотя MVVM больше характерен для WPF, его паттерны можно применять и в WinForms...</p>" },
+                    { title: "Команды и взаимодействие с пользователем в MVVM", content: "<h1>Команды и взаимодействие в MVVM</h1><p>Материал...</p>" },
+                    { title: "Параметры команды", content: "<h1>Параметры команды</h1><p>Материал...</p>" }
+                ]
+            }
+        ];
+
+        // Состояние приложения (индексы -1 означают "Главная страница")
+        let currentChapterIndex = -1;
+        let currentLessonIndex = -1;
+
+        // Элементы DOM
+        const navContainer = document.getElementById('course-nav');
+        const contentArea = document.getElementById('content-area');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnNextText = document.getElementById('btn-next-text');
+        const sidebar = document.getElementById('sidebar');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const overlay = document.getElementById('overlay');
+        const btnHome = document.getElementById('btn-home');
+
+        // Инициализация навигации
+        function initNavigation() {
+            navContainer.innerHTML = '';
+            
+            courseData.forEach((chapter, chapIdx) => {
+                const chapterEl = document.createElement('div');
+                chapterEl.className = 'mb-4';
+                
+                // Заголовок главы
+                const chapterTitle = document.createElement('div');
+                chapterTitle.className = 'chapter-title flex justify-between items-center px-4 py-2 text-sm font-bold text-slate-700 bg-slate-100 rounded-md hover:bg-slate-200 transition-colors';
+                chapterTitle.innerHTML = `
+                    <span>${chapter.chapter}</span>
+                    <svg class="w-4 h-4 transform transition-transform -rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                `;
+                
+                // Список лекций
+                const lessonsList = document.createElement('ul');
+                lessonsList.className = 'mt-1 space-y-1 pl-2 border-l-2 border-slate-100 ml-3';
+                lessonsList.style.display = 'none'; // По умолчанию все главы свернуты
+                
+                // Логика сворачивания/разворачивания главы
+                chapterTitle.addEventListener('click', () => {
+                    const isHidden = lessonsList.style.display === 'none';
+                    lessonsList.style.display = isHidden ? 'block' : 'none';
+                    chapterTitle.querySelector('svg').classList.toggle('-rotate-90', !isHidden);
+                });
+
+                // Добавление лекций в список
+                chapter.lessons.forEach((lesson, lessIdx) => {
+                    const lessonEl = document.createElement('li');
+                    const lessonLink = document.createElement('a');
+                    lessonLink.href = '#';
+                    lessonLink.className = 'nav-item block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary rounded-r-md transition-colors';
+                    lessonLink.textContent = lesson.title;
+                    
+                    lessonLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        loadLesson(chapIdx, lessIdx);
+                        closeMobileMenu();
+                    });
+
+                    lessonEl.appendChild(lessonLink);
+                    lessonsList.appendChild(lessonEl);
+                });
+
+                chapterEl.appendChild(chapterTitle);
+                chapterEl.appendChild(lessonsList);
+                navContainer.appendChild(chapterEl);
+            });
+        }
+        
+        // Загрузка главной страницы
+        function loadHome() {
+            currentChapterIndex = -1;
+            currentLessonIndex = -1;
+            
+            // Генерация списка глав для главной страницы
+            let syllabusHTML = courseData.map((ch, i) => `
+                <div class="p-4 border border-slate-200 rounded-lg bg-slate-50 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="loadLesson(${i}, 0); closeMobileMenu();">
+                    <div>
+                        <h3 class="font-bold text-slate-800 m-0 text-lg">${ch.chapter}</h3>
+                        <p class="text-sm text-slate-500 m-0 mt-1">${ch.lessons.length} лекций / материалов</p>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-slate-400"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                </div>
+            `).join('');
+
+            const homeContent = `
+                <h1>Курс: Разработка на Windows Forms (C#)</h1>
+                <p class="lead">Добро пожаловать! Этот интерактивный курс проведет вас от создания первого окна до построения сложных графических приложений с использованием продвинутых паттернов проектирования.</p>
+                
+                <h2>О курсе</h2>
+                <p>Windows Forms (WinForms) — это классическая, но до сих пор невероятно популярная и простая в освоении платформа для создания настольных приложений под Windows. В рамках данного курса вы узнаете:</p>
+                <ul>
+                    <li>Как настроить среду разработки Visual Studio и .NET CLI.</li>
+                    <li>Как работать с визуальным дизайнером и управлять свойствами элементов.</li>
+                    <li>Основы событийной модели и взаимодействия с пользователем.</li>
+                    <li>Принципы работы с контейнерами и стандартными элементами управления (кнопки, текстовые поля, списки и т.д.).</li>
+                    <li>Как создавать меню, панели инструментов и работать с диалоговыми окнами.</li>
+                    <li>Основы привязки данных и паттерна MVVM в контексте WinForms.</li>
+                </ul>
+
+                <h2>Структура курса</h2>
+                <div id="home-syllabus" class="not-prose mt-6 space-y-3">
+                    ${syllabusHTML}
+                </div>
+
+                <div class="mt-12 text-center">
+                    <button onclick="loadLesson(0,0)" class="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-sky-600 text-white text-lg font-medium rounded-xl transition-colors shadow-md hover:shadow-lg">
+                        Начать обучение (Глава 1)
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                    </button>
+                </div>
+            `;
+
+            contentArea.style.opacity = '0';
+            setTimeout(() => {
+                contentArea.innerHTML = homeContent;
+                contentArea.style.opacity = '1';
+                document.querySelector('main').scrollTo(0, 0);
+            }, 150);
+
+            updateNavHighlight();
+            updatePaginationButtons();
+        }
+
+        // Загрузка контента лекции
+        function loadLesson(chapIdx, lessIdx) {
+            currentChapterIndex = chapIdx;
+            currentLessonIndex = lessIdx;
+            
+            const lesson = courseData[chapIdx].lessons[lessIdx];
+            
+            // Плавное появление контента
+            contentArea.style.opacity = '0';
+            setTimeout(() => {
+                contentArea.innerHTML = lesson.content;
+                contentArea.style.opacity = '1';
+                
+                // Применяем подсветку синтаксиса Visual Studio к блокам кода
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+
+                // Прокрутка наверх при смене лекции
+                document.querySelector('main').scrollTo(0, 0);
+            }, 150);
+
+            updateNavHighlight();
+            updatePaginationButtons();
+        }
+
+        // Обновление подсветки активного пункта меню
+        function updateNavHighlight() {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            btnHome.classList.remove('active');
+            
+            if (currentChapterIndex === -1) {
+                // Активна главная страница
+                btnHome.classList.add('active');
+                return;
+            }
+            
+            // Находим нужный элемент на основе индексов
+            let globalIndex = 0;
+            for (let i = 0; i < currentChapterIndex; i++) {
+                globalIndex += courseData[i].lessons.length;
+            }
+            globalIndex += currentLessonIndex;
+            
+            const activeLink = document.querySelectorAll('.nav-item')[globalIndex];
+            if (activeLink) {
+                activeLink.classList.add('active');
+                // Убеждаемся, что родительская глава развернута
+                const lessonsList = activeLink.closest('ul');
+                if (lessonsList.style.display === 'none') {
+                    lessonsList.previousElementSibling.click();
+                }
+            }
+        }
+
+        // Обновление кнопок Вперед/Назад
+        function updatePaginationButtons() {
+            if (currentChapterIndex === -1) {
+                // Если мы на главной, прячем обе нижние кнопки (используем кнопку в самом контенте)
+                btnPrev.classList.add('hidden');
+                btnNext.classList.add('hidden');
+                return;
+            }
+
+            // Проверка кнопки Назад
+            if (currentChapterIndex === 0 && currentLessonIndex === 0) {
+                // На первой лекции кнопка Назад ведет на главную
+                btnPrev.classList.remove('hidden');
+                btnPrev.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                    На главную
+                `;
+            } else {
+                btnPrev.classList.remove('hidden');
+                btnPrev.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                    Предыдущая лекция
+                `;
+            }
+
+            // Проверка кнопки Вперед
+            if (currentChapterIndex === courseData.length - 1 && currentLessonIndex === courseData[currentChapterIndex].lessons.length - 1) {
+                btnNext.classList.add('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                btnNextText.textContent = "Следующая лекция";
+            }
+        }
+
+        // Обработчики для кнопок навигации
+        btnPrev.addEventListener('click', () => {
+            if (currentChapterIndex === 0 && currentLessonIndex === 0) {
+                loadHome();
+            } else if (currentLessonIndex > 0) {
+                loadLesson(currentChapterIndex, currentLessonIndex - 1);
+            } else if (currentChapterIndex > 0) {
+                const prevChapIdx = currentChapterIndex - 1;
+                loadLesson(prevChapIdx, courseData[prevChapIdx].lessons.length - 1);
+            }
+        });
+
+        btnNext.addEventListener('click', () => {
+            if (currentChapterIndex === -1) {
+                loadLesson(0, 0); // С главной на первую лекцию
+            } else if (currentLessonIndex < courseData[currentChapterIndex].lessons.length - 1) {
+                loadLesson(currentChapterIndex, currentLessonIndex + 1);
+            } else if (currentChapterIndex < courseData.length - 1) {
+                loadLesson(currentChapterIndex + 1, 0);
+            }
+        });
+        
+        btnHome.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadHome();
+            closeMobileMenu();
+        });
+
+        // Мобильное меню
+        function toggleMobileMenu() {
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                closeMobileMenu();
+            }
+        }
+
+        function closeMobileMenu() {
+            if (window.innerWidth < 768) { // md breakpoint in tailwind
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+        overlay.addEventListener('click', closeMobileMenu);
+
+        // Инициализация при загрузке
+        initNavigation();
+        loadHome(); // Теперь загружаем главную страницу первой
+    </script>
+</body>
+</html>
