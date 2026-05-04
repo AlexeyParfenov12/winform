@@ -1226,6 +1226,17 @@ this.Text = "Ширина: " + this.Width.ToString() + ", Высота: " + this
 <pre><code class="language-csharp">this.Controls.Remove(helloButton);</code></pre>
 
                             <p>Хотя в данном случае в качестве контейнера использовалась форма, но при добавлении и удалении элементов с любого другого контейнера, например, GroupBox, будет применяться все те же методы.</p>
+
+                            <h3>Массовое добавление элементов в цикле</h3>
+                            <p>Для практических задач часто требуется создать не один, а сразу множество элементов управления (например, сетку кнопок или список). Для этого удобно использовать циклы <code>for</code>. При создании элементов в цикле важно рассчитывать их координаты (свойство <code>Location</code>), чтобы они не накладывались друг на друга:</p>
+<pre><code class="language-csharp">for(int i = 0; i < 5; i++)
+{
+    Button btn = new Button();
+    btn.Text = "Кнопка " + i;
+    // Смещение по Y на 30 пикселей для каждой новой кнопки:
+    btn.Location = new Point(10, 10 + i * 30); 
+    this.Controls.Add(btn);
+}</code></pre>
                         `
                     },
                     {
@@ -1253,6 +1264,11 @@ this.Text = "Ширина: " + this.Width.ToString() + ", Высота: " + this
                             
                             <p>Также если панель имеет много элементов, которые выходят за ее границы, мы можем сделать прокручиваемую панель, установив ее свойство <code>AutoScroll</code> в <code>true</code>.</p>
                             
+                            <div class="my-4 p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                <h4 class="font-bold text-amber-800 mt-0">💡 Важно для практических работ:</h4>
+                                <p class="text-sm mb-0 text-amber-900">Свойство <code>BorderStyle</code> (со значением <code>FixedSingle</code> или <code>Fixed3D</code>) очень полезно для визуального выделения панели на фоне формы. А включение <code>AutoScroll = true</code> автоматически добавит полосы прокрутки, если элементы внутри (в том числе добавленные программно) перестанут помещаться в видимой области контейнера.</p>
+                            </div>
+
                             <p>Также, как и форма, GroupBox и Panel имеют коллекции элементов, и мы также можем динамически добавлять в эти контейнеры элементы. Например, на форме есть элемент GroupBox, который имеет имя <code>groupBox1</code>:</p>
 
 <pre><code class="language-csharp">private void Form1_Load(object sender, EventArgs e)
@@ -1347,6 +1363,16 @@ tableLayoutPanel1.Controls.Add(saveButton);
 tableLayoutPanel1.Controls.Add(saveButton, 2, 2);</code></pre>
 
                             <p>В данном случае добавляем кнопку в ячейку, образуемую на пересечении третьего столбца и третьей строки. Правда, если у нас нет столько строк и столбцов, то система автоматически выберет нужную ячейку для добавления.</p>
+
+                            <h3>Объединение ячеек (ColumnSpan и RowSpan)</h3>
+                            <p>Иногда нужно, чтобы один элемент управления (например, длинное поле ввода в калькуляторе) занимал не одну ячейку, а сразу несколько столбцов или строк. Для этого при добавлении элемента в TableLayoutPanel, у самого элемента (например, у TextBox) в окне Properties (Свойства) появляются специальные дополнительные свойства:</p>
+                            <ul>
+                                <li><strong>ColumnSpan</strong>: указывает, на сколько столбцов вширь растянется элемент.</li>
+                                <li><strong>RowSpan</strong>: указывает, на сколько строк вниз растянется элемент.</li>
+                            </ul>
+                            <div class="my-6 p-4 border border-dashed border-slate-300 bg-slate-50 text-center rounded-lg">
+                                <p class="text-slate-500 italic">📷 [Рекомендация: Сделайте скриншот окна Properties с выделенным свойством ColumnSpan (со значением 4) для добавленного текстового поля TextBox и поместите его сюда]</p>
+                            </div>
                         `
                     },
                     {
@@ -1425,6 +1451,11 @@ button1.Anchor = AnchorStyles.Left | AnchorStyles.Top;</code></pre>
                                 <li><strong>Right</strong>: элемент прикрепляется к правой стороне контейнера</li>
                                 <li><strong>Fill</strong>: элемент заполняет все пространство контейнера</li>
                             </ul>
+
+                            <div class="my-4 p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                <h4 class="font-bold text-amber-800 mt-0">💡 Особенности использования Dock с текстовыми полями:</h4>
+                                <p class="text-sm mb-0 text-amber-900">По умолчанию текстовое поле (<code>TextBox</code>) имеет фиксированную высоту в одну строку. Если установить ему <code>Dock = Fill</code>, оно растянется только по ширине. Чтобы поле заполнило контейнер целиком и по высоте, необходимо предварительно установить его свойство <code>Multiline</code> в значение <code>true</code>.</p>
+                            </div>
                         `
                     },
                     {
@@ -1492,6 +1523,12 @@ tabControl1.TabPages[0].Text = "Первая вкладка";</code></pre>
 
                             <p>Чтобы изменить положение сплитера в коде, мы можем управлять свойством <code>SplitterDistance</code>, которое задает положение сплиттера в пикселях от левого или верхнего края элемента SplitContainer. А с помощью свойства <code>SplitterIncrement</code> можно задать шаг, на который будет перемещаться сплиттер при движении его с помощью клавиш-стрелок.</p>
                             <p>Чтобы скрыть одну из двух панелей, мы можем установить свойство <code>Panel1Collapsed</code> или <code>Panel2Collapsed</code> в <code>true</code>.</p>
+                            
+                            <div class="my-4 p-4 bg-sky-50 rounded-lg border border-sky-200">
+                                <h4 class="font-bold text-sky-800 mt-0">📌 Рекомендации по работе с панелями:</h4>
+                                <p class="text-sm mb-2 text-sky-900">Сам <strong>SplitContainer</strong> состоит из двух отдельных контейнеров-панелей (<code>Panel1</code> и <code>Panel2</code>). При добавлении новых элементов из Toolbox перетаскивайте их именно внутрь одной из этих панелей. Чтобы вложенный элемент (например, <code>TabControl</code>) занял панель целиком, установите ему <code>Dock = Fill</code>.</p>
+                                <p class="text-sm mb-0 text-sky-900">Любым логическим (bool) свойством, например <code>IsSplitterFixed</code>, можно динамически управлять в коде, переключая его оператором отрицания (<code>!</code>): <br><code class="bg-sky-100 px-1 rounded">splitContainer1.IsSplitterFixed = !splitContainer1.IsSplitterFixed;</code></p>
+                            </div>
                         `
                     },
                     {
@@ -1522,6 +1559,34 @@ tabControl1.TabPages[0].Text = "Первая вкладка";</code></pre>
     }
 }</code></pre>
                             </div>
+                            
+                            <details class="mt-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <summary class="font-bold cursor-pointer text-primary">Посмотреть подробное решение</summary>
+                                <div class="mt-4 text-slate-700">
+                                    <p>1. Откройте код формы (клавиша F7 или ПКМ -> View Code).</p>
+                                    <p>2. Создайте обработчик события Load, если его нет (двойной клик по пустой области формы в дизайнере).</p>
+                                    <p>3. Вставьте следующий код внутрь метода <code>Form1_Load</code>:</p>
+<pre><code class="language-csharp">private void Form1_Load(object sender, EventArgs e)
+{
+    // Цикл по оси X
+    for(int i = 0; i < 3; i++) 
+    {
+        // Цикл по оси Y
+        for(int j = 0; j < 3; j++) 
+        {
+            Button btn = new Button();
+            btn.Size = new Size(50, 50); // Фиксированный размер
+            // 10 - отступ от краев, 55 - размер + 5 пикселей интервала
+            btn.Location = new Point(10 + i * 55, 10 + j * 55);
+            btn.Text = (i * 3 + j + 1).ToString(); // Нумерация 1-9
+            
+            // Обязательно добавляем на форму!
+            this.Controls.Add(btn);
+        }
+    }
+}</code></pre>
+                                </div>
+                            </details>
 
                             <hr class="my-8 border-slate-200">
 
@@ -1533,6 +1598,31 @@ tabControl1.TabPages[0].Text = "Первая вкладка";</code></pre>
                                 <li>Запустите приложение и попробуйте изменить размер окна. Убедитесь, что элементы автоматически переносятся на новую строку.</li>
                                 <li>Поэкспериментируйте со свойством <code>FlowDirection</code> (например, установите его в <code>TopDown</code>).</li>
                             </ol>
+                            
+                            <details class="mt-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <summary class="font-bold cursor-pointer text-primary">Посмотреть подробное решение</summary>
+                                <div class="mt-4 text-slate-700">
+                                    <p>1. Откройте панель инструментов (Toolbox) и перетащите <strong>FlowLayoutPanel</strong> на форму.</p>
+                                    <p>2. В окне свойств (Properties) найдите свойство <code>Dock</code>, откройте выпадающее меню и выберите центральный квадрат (значение <code>Fill</code>).</p>
+                                    <p>3. Там же установите <code>AutoScroll = true</code>, чтобы появилась полоса прокрутки, если элементы не влезут.</p>
+                                    <p>4. Дважды кликните по заголовку формы, чтобы создать обработчик загрузки, и напишите код для программного добавления элементов:</p>
+<pre><code class="language-csharp">private void Form1_Load(object sender, EventArgs e)
+{
+    // Генерируем 20 одинаковых кнопок
+    for (int i = 1; i <= 20; i++)
+    {
+        Button btn = new Button();
+        btn.Text = "Фото " + i;
+        btn.Size = new Size(100, 100); // Квадратные кнопки
+        btn.BackColor = Color.LightSkyBlue;
+        
+        // Добавляем не на форму, а в коллекцию FlowLayoutPanel!
+        flowLayoutPanel1.Controls.Add(btn);
+    }
+}</code></pre>
+                                    <p>5. Запустите приложение. При изменении размера окна кнопки будут плавно перестраиваться, образуя ровную сетку.</p>
+                                </div>
+                            </details>
 
                             <hr class="my-8 border-slate-200">
 
@@ -1545,6 +1635,18 @@ tabControl1.TabPages[0].Text = "Первая вкладка";</code></pre>
                                 <li>В остальные ячейки добавьте кнопки с цифрами и операциями, обязательно установив у каждой кнопки свойство <code>Dock = Fill</code>, чтобы кнопки заполнили ячейки.</li>
                                 <li>Измените размер формы при запущенном приложении. Кнопки должны пропорционально увеличиваться и уменьшаться.</li>
                             </ol>
+                            
+                            <details class="mt-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <summary class="font-bold cursor-pointer text-primary">Посмотреть подробное решение</summary>
+                                <div class="mt-4 text-slate-700">
+                                    <p>1. Добавьте <strong>TableLayoutPanel</strong> на форму. Установите в свойствах <code>Dock = Fill</code>.</p>
+                                    <p>2. Нажмите на маленькую стрелочку (смарт-тег) в правом верхнем углу компонента и выберите <strong>Edit Rows and Columns</strong> (Изменить строки и столбцы).</p>
+                                    <p>3. Переключитесь на <em>Columns</em> (Столбцы). Добавьте столбцы так, чтобы их стало 4. Выделите каждый и установите <code>Size Type = Percent</code> и значение <code>25%</code>.</p>
+                                    <p>4. Переключитесь на <em>Rows</em> (Строки). Добавьте строки так, чтобы их стало 5. Для первой строки выберите <code>Absolute = 50</code>, для остальных 4-х выберите <code>Percent = 25%</code>. Нажмите OK.</p>
+                                    <p>5. Из панели инструментов перетащите <strong>TextBox</strong> в самую верхнюю левую ячейку. В свойствах TextBox установите <code>Dock = Fill</code>, <code>Multiline = true</code>. Затем найдите свойство <code>ColumnSpan</code> и впишите туда <code>4</code>. Текстовое поле растянется на всю ширину.</p>
+                                    <p>6. Перетаскивайте элементы <strong>Button</strong> в оставшиеся ячейки. У каждой кнопки меняйте свойство <code>Dock</code> на <code>Fill</code>. Меняйте свойство <code>Text</code> на нужные цифры (1, 2, 3, +, -, и т.д.).</p>
+                                </div>
+                            </details>
 
                             <hr class="my-8 border-slate-200">
 
@@ -1557,6 +1659,19 @@ tabControl1.TabPages[0].Text = "Первая вкладка";</code></pre>
                                 <li>Добавьте внутрь верхней панели (PanelTop) кнопку "Сохранить" и поместите её в правый нижний угол панели. Установите кнопке свойство <code>Anchor = Bottom, Right</code>.</li>
                                 <li>Проверьте работу при изменении размеров окна: панели должны оставаться на своих местах, текстовое поле — растягиваться, а кнопка — всегда оставаться справа.</li>
                             </ol>
+                            
+                            <details class="mt-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <summary class="font-bold cursor-pointer text-primary">Посмотреть подробное решение</summary>
+                                <div class="mt-4 text-slate-700">
+                                    <p>1. Перетащите <strong>Panel</strong> на форму. В свойствах установите <code>Dock = Top</code>. Свойству <code>Height</code> установите <code>50</code>. Для наглядности задайте <code>BackColor = LightBlue</code>.</p>
+                                    <p>2. Перетащите вторую <strong>Panel</strong> на форму. Установите <code>Dock = Left</code>. Свойству <code>Width</code> установите <code>150</code>, <code>BackColor = LightGray</code>.</p>
+                                    <p>3. Перетащите <strong>TextBox</strong> на свободное место формы. В свойствах установите <code>Multiline = true</code>. Затем установите <code>Dock = Fill</code> (он займет всю оставшуюся центральную часть).</p>
+                                    <p>4. Перетащите <strong>Button</strong> <em>внутрь</em> верхней синей панели. Измените её текст на <em>"Сохранить"</em>.</p>
+                                    <p>5. Передвиньте кнопку мышью в правый нижний угол верхней панели.</p>
+                                    <p>6. Выделите кнопку, найдите свойство <code>Anchor</code>. По умолчанию там выбрано <code>Top, Left</code>. Кликните по значению и в графическом редакторе свойства снимите верхнюю и левую палочки, и выделите нижнюю и правую (значение изменится на <code>Bottom, Right</code>).</p>
+                                    <p>7. Запустите приложение. При изменении ширины окна кнопка будет перемещаться синхронно с правым краем.</p>
+                                </div>
+                            </details>
 
                             <hr class="my-8 border-slate-200">
 
@@ -1569,6 +1684,90 @@ tabControl1.TabPages[0].Text = "Первая вкладка";</code></pre>
                                 <li>В окне свойств добавьте 3 вкладки в <code>TabControl</code> (через свойство <code>TabPages</code>) и назовите их: "Основные", "Дополнительные", "Настройки".</li>
                                 <li>Запустите приложение. Попробуйте потянуть за центральный разделитель (сплиттер) мышью, чтобы изменить пропорции левой и правой панели.</li>
                             </ol>
+                            
+                            <details class="mt-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <summary class="font-bold cursor-pointer text-primary">Посмотреть подробное решение</summary>
+                                <div class="mt-4 text-slate-700">
+                                    <p>1. Добавьте <strong>SplitContainer</strong> на форму. Он по умолчанию займет все пространство (<code>Dock = Fill</code>).</p>
+                                    <p>2. Кликните мышью внутри левой панели (<code>Panel1</code>). Из панели инструментов перетащите туда <strong>Button</strong> и установите ей <code>Dock = Top</code>. Повторите процесс еще для двух кнопок. Они выстроятся в аккуратный вертикальный список меню.</p>
+                                    <p>3. Кликните мышью внутри правой панели (<code>Panel2</code>). Перетащите туда <strong>TabControl</strong>.</p>
+                                    <p>4. Выделите добавленный <strong>TabControl</strong> и установите ему <code>Dock = Fill</code>.</p>
+                                    <p>5. В свойствах <strong>TabControl</strong> найдите коллекцию <code>TabPages</code> и нажмите кнопку <code>...</code> напротив неё.</p>
+                                    <p>6. В открывшемся окне нажмите <strong>Add</strong>, чтобы добавить третью вкладку. Слева в списке поочередно выделяйте вкладки, а справа в их свойствах меняйте <code>Text</code> на <em>"Основные"</em>, <em>"Дополнительные"</em>, <em>"Настройки"</em>. Нажмите ОК.</p>
+                                </div>
+                            </details>
+
+                            <hr class="my-8 border-slate-200">
+
+                            <h3>Работа 6: «Анкета пользователя» (GroupBox и Panel)</h3>
+                            <p><strong>Цель:</strong> Научиться группировать элементы управления и работать с прокруткой в панелях.</p>
+                            <ol>
+                                <li>Разместите на форме элемент <code>GroupBox</code> и задайте его свойству <code>Text</code> значение <em>"Личные данные"</em>. Внутрь добавьте <code>Label</code> и <code>TextBox</code> для ввода имени и фамилии.</li>
+                                <li>Рядом с <code>GroupBox</code> добавьте элемент <code>Panel</code>. Установите для него свойство <code>BorderStyle = FixedSingle</code>, чтобы рамка панели была четко видна.</li>
+                                <li>В окне свойств панели включите <code>AutoScroll = true</code>.</li>
+                                <li>Добавьте внутрь <code>Panel</code> элементы управления (например, 7-10 штук <code>CheckBox</code> для выбора хобби), располагая их друг под другом так, чтобы нижние визуально выходили за нижнюю границу панели.</li>
+                                <li>Запустите приложение. Убедитесь, что внутри панели автоматически появилась полоса прокрутки, позволяющая увидеть все флажки, при этом сам <code>GroupBox</code> остается на месте.</li>
+                            </ol>
+                            
+                            <details class="mt-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <summary class="font-bold cursor-pointer text-primary">Посмотреть подробное решение</summary>
+                                <div class="mt-4 text-slate-700">
+                                    <p>1. Добавьте <strong>GroupBox</strong> из панели инструментов. В свойствах укажите <code>Text = "Личные данные"</code>. Растяните его. Перетащите внутрь него элементы Label и TextBox как в обычной форме.</p>
+                                    <p>2. Рядом добавьте элемент <strong>Panel</strong>. Выделите его, найдите <code>BorderStyle</code> и выберите <code>FixedSingle</code>. Установите <code>AutoScroll = True</code>. Задайте панели высоту около 150 пикселей.</p>
+                                    <p>3. Самый быстрый способ добавить флажки — сделать это программно. Создайте обработчик загрузки формы и добавьте код:</p>
+<pre><code class="language-csharp">private void Form1_Load(object sender, EventArgs e)
+{
+    string[] hobbies = { "Чтение", "Спорт", "Музыка", "Игры", "Кино", "Путешествия", "Кулинария", "Фотография" };
+    for (int i = 0; i < hobbies.Length; i++)
+    {
+        CheckBox cb = new CheckBox();
+        cb.Text = hobbies[i];
+        cb.Location = new Point(10, 10 + i * 30); // Располагаем сверху вниз
+        panel1.Controls.Add(cb); // Где panel1 - имя вашей панели
+    }
+}</code></pre>
+                                    <p>4. При запуске флажки не поместятся в 150 пикселей по высоте, и у Panel автоматически появится вертикальный скроллбар.</p>
+                                </div>
+                            </details>
+
+                            <hr class="my-8 border-slate-200">
+
+                            <h3>Работа 7: «Продвинутый просмотрщик» (TabControl и SplitContainer)</h3>
+                            <p><strong>Цель:</strong> Построить сложный адаптивный интерфейс с фиксированными областями и динамическими вкладками.</p>
+                            <ol>
+                                <li>Добавьте на форму <code>SplitContainer</code>, установив <code>Dock = Fill</code> и <code>Orientation = Horizontal</code> (горизонтальное разделение).</li>
+                                <li>В верхней панели (Panel1) разместите <code>TabControl</code> (установите ему <code>Dock = Fill</code>). Измените заголовки вкладок на <em>"Документ 1"</em> и <em>"Документ 2"</em>. В каждую вкладку добавьте текстовое поле (<code>TextBox</code> со свойствами <code>Multiline = true</code> и <code>Dock = Fill</code>).</li>
+                                <li>В нижней панели (Panel2) разместите кнопку <em>"Заблокировать разделитель"</em>.</li>
+                                <li>Настройте <code>SplitContainer</code> так, чтобы нижняя панель имела фиксированную высоту при растягивании формы окна: выберите сам сплит-контейнер и установите свойство <code>FixedPanel = Panel2</code>.</li>
+                                <li>Двойным кликом по кнопке создайте обработчик события и напишите код, который будет переключать возможность пользователя двигать разделитель мышью.</li>
+                            </ol>
+
+                            <div class="my-4 p-4 bg-sky-50 rounded-lg border border-sky-200">
+                                <h4 class="font-bold text-sky-800 mt-0">💡 Подсказка к Работе 7</h4>
+<pre><code class="language-csharp">private void button1_Click(object sender, EventArgs e)
+{
+    // Меняем значение на противоположное
+    splitContainer1.IsSplitterFixed = !splitContainer1.IsSplitterFixed;
+    
+    // Обновляем текст на кнопке
+    if (splitContainer1.IsSplitterFixed)
+        button1.Text = "Разблокировать разделитель";
+    else
+        button1.Text = "Заблокировать разделитель";
+}</code></pre>
+                            </div>
+                            
+                            <details class="mt-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <summary class="font-bold cursor-pointer text-primary">Посмотреть подробное решение</summary>
+                                <div class="mt-4 text-slate-700">
+                                    <p>1. Добавьте <strong>SplitContainer</strong>. Установите <code>Dock = Fill</code> и найдите свойство <code>Orientation</code>, смените <code>Vertical</code> на <code>Horizontal</code>.</p>
+                                    <p>2. В верхнюю часть (Panel1) перетащите <strong>TabControl</strong>, задайте ему <code>Dock = Fill</code>.</p>
+                                    <p>3. Настройте вкладки TabControl через свойство <code>TabPages</code> (измените текст на "Документ 1" и "Документ 2"). Откройте первую вкладку в дизайнере, перетащите туда <strong>TextBox</strong>, установите <code>Multiline = true</code> и <code>Dock = Fill</code>. Повторите для второй вкладки.</p>
+                                    <p>4. В нижнюю часть (Panel2) сплиттера добавьте <strong>Button</strong>. Измените <code>Text</code> на <em>"Заблокировать разделитель"</em>.</p>
+                                    <p>5. Выделите сам <strong>SplitContainer</strong> (кликните по линии разделителя) и в свойствах установите <code>FixedPanel = Panel2</code>. Теперь нижняя панель с кнопкой не будет увеличиваться при растягивании окна.</p>
+                                    <p>6. Сделайте двойной клик по кнопке и вставьте предоставленный выше код из подсказки.</p>
+                                </div>
+                            </details>
                         `
                     }
                 ]
@@ -1660,62 +1859,7 @@ tabControl1.TabPages[0].Text = "Первая вкладка";</code></pre>
                             <p>Аналогично работает свойство формы <code>CancelButton</code>, которое назначает кнопку отмены. Назначив такую кнопку, мы можем вызвать ее нажатие, нажав на клавишу Esc.</p>
                         `
                     },
-                    {
-                        title: "Метки и ссылки",
-                        content: `
-                            <h1>Метки и ссылки</h1>
-                            
-                            <h3>Label</h3>
-                            <p>Для отображения простого текста на форме, доступного только для чтения, служит элемент Label. Чтобы задать отображаемый текст метки, надо установить свойство <code>Text</code> элемента.</p>
-
-                            <h3>LinkLabel</h3>
-                            <p>Особый тип меток представляют элементы LinkLabel, которые предназначены для вывода ссылок, которые аналогичны ссылкам, размещенным на стандартных веб-станиц.</p>
-                            <p>Также, как и с обычными ссылками на веб-страницах, мы можем по отношению к данному элементу определить три цвета:</p>
-                            <ul>
-                                <li>Свойство <code>ActiveLinkColor</code> задает цвет ссылки при нажатии</li>
-                                <li>Свойство <code>LinkColor</code> задает цвет ссылки до нажатия, по которой еще не было переходов</li>
-                                <li>Свойство <code>VisitedLinkColor</code> задает цвет ссылки, по которой уже были переходы</li>
-                            </ul>
-                            <p>Кроме цвета ссылки для данного элемента мы можем задать свойство <code>LinkBehavior</code>, которое управляет поведением ссылки. Это свойство принимает четыре возможных значения:</p>
-                            <ul>
-                                <li><strong>SystemDefault</strong>: для ссылки устанавливаются системные настройки</li>
-                                <li><strong>AlwaysUnderline</strong>: ссылка всегда подчеркивается</li>
-                                <li><strong>HoverUnderline</strong>: ссылка подчеркивается только при наведении на нее курсора мыши</li>
-                                <li><strong>NeverUnderline</strong>: ссылка никогда не подчеркивается</li>
-                            </ul>
-                            <p>По умолчанию весь текст на данном элементе считается ссылкой. Однако с помощью свойства <code>LinkArea</code> мы можем изменить область ссылки. Например, мы не хотим включать в ссылку первые шесть символов. Для этого задаем подсвойство <code>Start</code>:</p>
-                            
-                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
-                                <img src="img/4.4.png" alt="Свойство LinkArea" class="mx-auto rounded border border-slate-300 shadow-md">
-                                <p class="text-sm mt-2">Свойство LinkArea</p>
-                            </div>
-
-                            <p>Чтобы выполнить переход по ссылке по нажатию на нее, надо дополнительно написать код. Данный код должен обрабатывать событие <code>LinkClicked</code>, которое есть у элемента LinkLabel. Например, пусть у нас на форме есть элемент ссылки называется linkLabel1 и который содержит некоторую ссылку:</p>
-
-                            <div class="my-6 p-4 bg-slate-100 rounded-lg border border-slate-200 text-center text-slate-500">
-                                <img src="img/4.5.png" alt="Элемент LinkLabel на форме" class="mx-auto rounded border border-slate-300 shadow-md">
-                                <p class="text-sm mt-2">Элемент LinkLabel</p>
-                            </div>
-
-                            <p>Чтобы перейти по ссылке, зададим обработчик LinkClicked:</p>
-<pre><code class="language-csharp">public partial class Form1 : Form
-{
-    public Form1()
-    {
-        InitializeComponent();
-        // задаем обработчик события
-        linkLabel1.LinkClicked += linkLabel1_LinkClicked;
-    }
-
-    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-        System.Diagnostics.Process.Start("http://metanit.com");
-    }
-}</code></pre>
-
-                            <p>Метод <code>System.Diagnostics.Process.Start()</code> откроет данную ссылку в веб-браузере, который установлен в системе браузером по умолчанию.</p>
-                        `
-                    },
+                    { title: "Метки и ссылки", content: "<h1>Метки и ссылки</h1><p>Label и LinkLabel...</p>" },
                     { title: "Текстовое поле TextBox", content: "<h1>Текстовое поле TextBox</h1><p>Материал...</p>" },
                     { title: "Элемент MaskedTextBox", content: "<h1>Элемент MaskedTextBox</h1><p>Материал...</p>" },
                     { title: "Элементы Radiobutton и CheckBox", content: "<h1>Элементы Radiobutton и CheckBox</h1><p>Материал...</p>" },
